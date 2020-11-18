@@ -1,0 +1,9 @@
+version: '3'
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_DB: bilemoapi
+      POSTGRES_USER: mde
+      POSTGRES_PASSWORD: mde
+    ports: [5432]
