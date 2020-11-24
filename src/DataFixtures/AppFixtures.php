@@ -12,7 +12,7 @@ class AppFixtures extends Fixture
     {
         for ($i = 0; $i < 5; $i++) {
             $platform = new Platform();
-            $platform->setName("platform$i")
+            $platform->setName("platform_$i")
                 ->setUrl("www.testurl.platform$i.com");
 
             $manager->persist($platform);
