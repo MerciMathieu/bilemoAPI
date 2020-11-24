@@ -30,7 +30,7 @@ class Platform
     private $url;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="platform")
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="platform", cascade={"persist"})
      */
     private $users;
 
