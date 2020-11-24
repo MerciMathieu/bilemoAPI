@@ -43,7 +43,7 @@ class Product
     private $price;
 
     /**
-     * @ORM\Column(type="text", length=255, nullable=true)
+     * @ORM\Column(type="text", length=255)
      */
     private $description;
 
@@ -117,7 +117,7 @@ class Product
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 

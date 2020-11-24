@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\PlatformRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -9,13 +10,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class PlatformController extends AbstractController
 {
     /**
-     * @Route("/platform", name="platform")
+     * @Route("/bilemo/platforms", name="platform", methods={"GET"})
      */
-    public function index(): Response
+    public function getPlatformsList(PlatformRepository $platformRepository): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/PlatformController.php',
-        ]);
+        $platforms = $platformRepository->findAll();
+
+        return $this->json($platforms);
     }
 }
