@@ -10,8 +10,8 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $platform = new Platform();
         for ($i = 0; $i < 5; $i++) {
+            $platform = new Platform();
             $platform->setName("platform$i")
                 ->setUrl("www.testurl.platform$i.com");
 
