@@ -16,6 +16,6 @@ class PlatformController extends AbstractController
     {
         $platforms = $platformRepository->findAll();
 
-        return $this->json($platforms);
+        return $this->json([$platforms]);
     }
 }

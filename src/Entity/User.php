@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -29,7 +30,8 @@ class User
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Platform::class, inversedBy="users")
+     * @Groups("user")
+     * @ORM\ManyToOne(targetEntity=Platform::class, inversedBy="users", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $platform;

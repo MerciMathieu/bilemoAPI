@@ -6,6 +6,7 @@ use App\Repository\PlatformRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=PlatformRepository::class)
@@ -30,7 +31,8 @@ class Platform
     private $url;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="platform", cascade={"persist"})
+     * @Groups("platform_users")
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="platform", orphanRemoval=true)
      */
     private $users;
 
