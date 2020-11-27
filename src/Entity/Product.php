@@ -47,6 +47,11 @@ class Product
      */
     private $description;
 
+    /**
+     * @ORM\Column(type="text", length=255)
+     */
+    private $urlImage;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +125,18 @@ class Product
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getUrlImage(): ?string
+    {
+        return $this->urlImage;
+    }
+
+    public function setUrlImage(string $urlImage): self
+    {
+        $this->urlImage = $urlImage;
 
         return $this;
     }
