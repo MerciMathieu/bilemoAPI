@@ -25,7 +25,7 @@ class UserController extends AbstractController
      */
     public function getUserDetails(UserRepository $userRepository, int $id): Response
     {
-        $user = $userRepository->findOneBy($id);
+        $user = $userRepository->findOneBy(['id' => $id]);
 
         return $this->json($user);
     }
