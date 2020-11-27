@@ -134,7 +134,7 @@ class Product
         return $this->urlImage;
     }
 
-    public function setUrlImage(string $urlImage): self
+    public function setUrlImage(?string $urlImage): self
     {
         $this->urlImage = $urlImage;
 

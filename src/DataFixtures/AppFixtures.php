@@ -20,7 +20,8 @@ class AppFixtures extends Fixture
                 ->setMemory(512)
                 ->setModelName("model_$p")
                 ->setModelRef("Ref_$p")
-                ->setPrice(4000.99);
+                ->setPrice(4000.99)
+                ->setUrlImage('');
 
             $manager->persist($product);
         }
