@@ -7,17 +7,28 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController extends AbstractController
 {
     /**
-     * @Route("/bilemo/{platform}/users", name="users", methods={"GET"})
+     * @Route("/bilemo/{platformId}/users", name="users", methods={"GET"})
      */
-    public function getUsers(PlatformRepository $platformRepository, UserRepository $userRepository, string $platform): Response
+    public function getUsers(PlatformRepository $platformRepository, UserRepository $userRepository, int $platformId, SerializerInterface $serializer): Response
     {
-        $users = $userRepository->findBy(['platform' => $platformRepository->findOneBy(['name' => $platform])]);
+        $platform = $platformRepository->find($platformId);
+        $users = $userRepository->findBy(['platform' => $platform]);
 
-        return $this->json($users);
+        $usersJson = $serializer->serialize(
+            $users,
+            'json',
+            ['groups' => 'list_users']
+        );
+
+        return new Response($usersJson);
+
+        // REGARDER COMMENT SONT GÉRÉS METADATA
+        // return $this->json($users);
     }
 
     /**

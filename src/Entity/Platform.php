@@ -5,8 +5,9 @@ namespace App\Entity;
 use App\Repository\PlatformRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=PlatformRepository::class)
@@ -17,22 +18,27 @@ class Platform
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"list_platforms"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Groups({"list_platforms"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Url()
+     * @Groups({"list_platforms"})
      */
     private $url;
 
     /**
      * @Groups("platform_users")
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="platform", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="platform", orphanRemoval=true, cascade={"persist"})
      */
     private $users;
 
