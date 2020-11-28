@@ -37,10 +37,9 @@ class AppFixtures extends Fixture
 
             for ($u = 0; $u < 15; $u++) {
                 $user = new User();
-                $user->setEmail($faker->email)
-                    ->setPlatform($platform);
+                $user->setEmail($faker->email);
 
-                $manager->persist($user);
+                $platform->addUser($user);
             }
 
             $manager->persist($platform);
