@@ -24,7 +24,7 @@ class ProductController extends AbstractController
      */
     public function getProductDetails(ProductRepository $productRepository, int $id): Response
     {
-        $product = $productRepository->findOneBy(['id' => $id]);
+        $product = $productRepository->findOneBy(['id'=>$id]);
 
         return $this->json($product);
     }
