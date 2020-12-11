@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/bilemo/{platformId}/users", name="users", methods={"GET"})
+     * @Route("/bilemo/platforms/{platformId<\d+>}/users", name="users", methods={"GET"})
      */
     public function getUsers(PlatformRepository $platformRepository, UserRepository $userRepository, int $platformId, SerializerInterface $serializer): Response
     {
@@ -32,11 +32,11 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/bilemo/users/{id}", name="user_details", methods={"GET"})
+     * @Route("/bilemo/users/{userId<\d+>}", name="user_details", methods={"GET"})
      */
-    public function getUserDetails(UserRepository $userRepository, int $id): Response
+    public function getUserDetails(UserRepository $userRepository, int $userId): Response
     {
-        $user = $userRepository->findOneBy(['id'=>$id]);
+        $user = $userRepository->findOneBy(['id' => $userId]);
 
         return $this->json($user);
     }
