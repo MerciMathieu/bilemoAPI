@@ -24,14 +24,12 @@ class Platform
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Vous devez entrer un nom")
      * @Groups({"list_platforms"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Url(message="L'url que vous avez entré n'est pas valide")
      * @Groups({"list_platforms"})
      */
     private $url;

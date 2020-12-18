@@ -32,6 +32,15 @@ class ProductController extends AbstractController
     public function getProductDetails(ProductRepository $productRepository, SerializerInterface $serializer, int $productId): Response
     {
         $product = $productRepository->find($productId);
+        if (!$product || $product === null) {
+            $exception = $this->createNotFoundException("Product $productId was not found.");
+            return new Response(
+                $exception->getMessage(),
+                $exception->getStatusCode(),
+                ["ContentType" => "application/json"]
+            );
+        }
+
         $productJson = $serializer->serialize(
             $product,
             'json',

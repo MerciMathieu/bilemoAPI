@@ -17,6 +17,15 @@ class UserController extends AbstractController
     public function getUsers(PlatformRepository $platformRepository, UserRepository $userRepository, int $platformId, SerializerInterface $serializer): Response
     {
         $platform = $platformRepository->find($platformId);
+        if (!$platform || $platform == null) {
+            $exception = $this->createNotFoundException("Platform $platformId was not found.");
+            return new Response(
+                $exception->getMessage(),
+                $exception->getStatusCode(),
+                ["ContentType" => "application/json"]
+            );
+        }
+
         $users = $userRepository->findBy(['platform' => $platform]);
 
         $usersJson = $serializer->serialize(
@@ -34,7 +43,25 @@ class UserController extends AbstractController
     public function getUserDetails(UserRepository $userRepository, SerializerInterface $serializer, int $userId, int $platformId, PlatformRepository $platformRepository): Response
     {
         $platform = $platformRepository->find($platformId);
+        if (!$platform || $platform == null) {
+            $exception = $this->createNotFoundException("Platform $platformId was not found.");
+            return new Response(
+                $exception->getMessage(),
+                $exception->getStatusCode(),
+                ["ContentType" => "application/json"]
+            );
+        }
+
         $user = $userRepository->findBy(['platform' => $platform, 'id' => $userId]);
+        if (!$user || $user == null) {
+            $exception = $this->createNotFoundException("User $userId was not found.");
+            return new Response(
+                $exception->getMessage(),
+                $exception->getStatusCode(),
+                ["ContentType" => "application/json"]
+            );
+        }
+
         $userJson = $serializer->serialize(
             $user,
             'json',

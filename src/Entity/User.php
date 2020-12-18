@@ -25,8 +25,8 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="Vous devez entrer un email tel que '?email=email@test.fr', à la fin de l'URL")
-     * @Assert\Email(message="L'email que vous avez entré n'est pas valide")
+     * @Assert\NotBlank(message="You have to add an email address")
+     * @Assert\Email(message="Email is not valid")
      * @Groups({"list_users", "list_users_details"})
      */
     private $email;

@@ -37,9 +37,13 @@ class PlatformController extends AbstractController
     public function addUser(SerializerInterface $serializer, int $platformId, PlatformRepository $platformRepository, Request $request, EntityManagerInterface $manager, ValidatorInterface $validator): Response
     {
         $platform = $platformRepository->find($platformId);
-
-        if (!$platform || $platform == null ) {
-            $this->createNotFoundException();
+        if (!$platform || $platform == null) {
+            $exception = $this->createNotFoundException("Platform $platformId was not found.");
+            return new Response(
+                $exception->getMessage(),
+                $exception->getStatusCode(),
+                ["ContentType" => "application/json"]
+            );
         }
 
         /** @var User $user */
@@ -70,22 +74,24 @@ class PlatformController extends AbstractController
     /**
      * @Route("/bilemo/platforms/{platformId<\d+>}/users/delete/{userId<\d+>}", name="delete_user", methods={"DELETE"})
      */
-    public function deleteUser(PlatformRepository $platformRepository, int $platformId, UserRepository $userRepository, int $userId, SerializerInterface $serializer, EntityManagerInterface $manager): Response
+    public function deleteUser(PlatformRepository $platformRepository, int $platformId, UserRepository $userRepository, int $userId,  EntityManagerInterface $manager): Response
     {
         $platform = $platformRepository->find($platformId);
-        if ($platform == null) {
+        if (!$platform || $platform === null) {
+            $exception = $this->createNotFoundException("Platform $platformId was not found.");
             return new Response(
-                "La plateforme '$platformId' n'existe pas!",
-                404,
+                $exception->getMessage(),
+                $exception->getStatusCode(),
                 ["ContentType" => "application/json"]
             );
         }
 
         $user = $userRepository->find($userId);
-        if ($user == null) {
+        if (!$user || $user === null) {
+            $exception = $this->createNotFoundException("User $userId was not found.");
             return new Response(
-                "L'utilisateur '$userId' n'existe pas!",
-                404,
+                $exception->getMessage(),
+                $exception->getStatusCode(),
                 ["ContentType" => "application/json"]
             );
         }
@@ -94,9 +100,7 @@ class PlatformController extends AbstractController
         $manager->flush();
 
         return new Response(
-            "L'utilisateur a bien été supprimé!",
-            200,
-            ["ContentType" => "application/json"]
+            "$userId from platform $platformId was deleted.", 200, ["ContentType" => "application/json"]
         );
     }
 }
