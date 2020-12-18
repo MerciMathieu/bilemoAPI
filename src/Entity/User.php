@@ -4,12 +4,14 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @UniqueEntity("email", message="L'email que vous avez entré existe déjà!")
  */
 class User
 {
@@ -22,16 +24,16 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Email()
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\NotBlank(message="Vous devez entrer un email tel que '?email=email@test.fr', à la fin de l'URL")
+     * @Assert\Email(message="L'email que vous avez entré n'est pas valide")
      * @Groups({"list_users"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
+     * @Assert\Type("\DateTimeInterface")
      * @Groups({"list_users"})
      */
     private $createdAt;
@@ -40,12 +42,13 @@ class User
      * @Groups("user")
      * @ORM\ManyToOne(targetEntity=Platform::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"list_users"})
      */
     private $platform;
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime('now');
+        $this->createdAt = new \DateTime('NOW');
     }
 
     public function getId(): ?int
@@ -65,7 +68,7 @@ class User
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
     }

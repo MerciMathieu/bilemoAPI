@@ -25,11 +25,11 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/bilemo/products/{id}", name="product_details", methods={"GET"})
+     * @Route("/bilemo/products/{productId<\d+>}", name="product_details", methods={"GET"})
      */
-    public function getProductDetails(ProductRepository $productRepository, SerializerInterface $serializer, int $id): Response
+    public function getProductDetails(ProductRepository $productRepository, SerializerInterface $serializer, int $productId): Response
     {
-        $product = $productRepository->findOneBy(['id'=>$id]);
+        $product = $productRepository->find($productId);
         $productJson = $serializer->serialize(
             $product,
             'json'
