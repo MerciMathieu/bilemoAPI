@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class PlatformController extends AbstractController
 {
     /**
-     * @Route("/bilemo/platforms", name="platform", methods={"GET"})
+     * @Route("/bilemo/platforms", name="platforms_list", methods={"GET"})
      */
     public function getPlatformsList(PlatformRepository $platformRepository, SerializerInterface $serializer): Response
     {
