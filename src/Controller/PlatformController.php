@@ -28,7 +28,7 @@ class PlatformController extends AbstractController
             ['groups' => 'list_platforms']
         );
 
-        return new Response($platformsJson);
+        return new Response($platformsJson, 200, ['Content-Type' => 'application/json']);
     }
 
     /**
