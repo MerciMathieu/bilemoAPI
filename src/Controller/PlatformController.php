@@ -39,7 +39,7 @@ class PlatformController extends AbstractController
     {
         $platform = $platformRepository->find($platformId);
         if (!$platform || $platform === null) {
-            $exception->throwJsonException("Platform $platformId was not found");
+            return $exception->throwJsonException("Platform $platformId was not found");
         }
 
         /** @var User $user */
@@ -73,12 +73,12 @@ class PlatformController extends AbstractController
     {
         $platform = $platformRepository->find($platformId);
         if (!$platform || $platform === null) {
-            $exception->throwJsonException("Platform $platformId was not found");
+            return $exception->throwJsonException("Platform $platformId was not found");
         }
 
         $user = $userRepository->find($userId);
         if (!$user || $user === null) {
-            $exception->throwJsonException("User $userId was not found");
+            return $exception->throwJsonException("User $userId was not found");
         }
 
         $platform->removeUser($user);
