@@ -85,7 +85,9 @@ class PlatformController extends AbstractController
         $manager->flush();
 
         return new Response(
-            "$userId from platform $platformId was deleted.", 200, ["ContentType" => "application/json"]
+            "$userId from platform $platformId was deleted.",
+            200,
+            ["ContentType" => "application/json"]
         );
     }
 }
