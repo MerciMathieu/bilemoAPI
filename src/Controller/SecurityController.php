@@ -17,7 +17,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/register", name="register", methods={"POST"})
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, ValidatorInterface $validator)
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     {
         $values = json_decode($request->getContent());
         if(!isset($values->username, $values->password)) {
@@ -43,5 +43,20 @@ class SecurityController extends AbstractController
         $entityManager->flush();
 
         return new Response("Access on API created", 201, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/login", name="login", methods={"POST"})
+     */
+    public function login(Request $request)
+    {
+        $user = $this->getUser();
+
+        $userdData = $this->json([
+            'username' => $user->getUsername(),
+            'roles' => $user->getRoles()
+        ]);
+
+        return $userdData;
     }
 }
