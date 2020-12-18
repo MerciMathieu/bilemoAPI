@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Classes\ExceptionHandler;
 use App\Entity\User;
 use App\Repository\PlatformRepository;
 use App\Repository\UserRepository;
@@ -34,22 +35,16 @@ class PlatformController extends AbstractController
     /**
      * @Route("/bilemo/platforms/{platformId<\d+>}/users/create", name="user_create", methods={"POST"})
      */
-    public function addUser(SerializerInterface $serializer, int $platformId, PlatformRepository $platformRepository, Request $request, EntityManagerInterface $manager, ValidatorInterface $validator): Response
+    public function addUser(SerializerInterface $serializer, int $platformId, PlatformRepository $platformRepository, Request $request, EntityManagerInterface $manager, ValidatorInterface $validator, ExceptionHandler $exception): Response
     {
         $platform = $platformRepository->find($platformId);
-        if (!$platform || $platform == null) {
-            $exception = $this->createNotFoundException("Platform $platformId was not found.");
-            return new Response(
-                $exception->getMessage(),
-                $exception->getStatusCode(),
-                ["ContentType" => "application/json"]
-            );
+        if (!$platform || $platform === null) {
+            $exception->throwJsonException("Platform $platformId was not found");
         }
 
         /** @var User $user */
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
         $violations = $validator->validate($user);
-
         if ($violations->count()) {
             $errorMessages = [];
             foreach ($violations as $error) {
@@ -74,26 +69,16 @@ class PlatformController extends AbstractController
     /**
      * @Route("/bilemo/platforms/{platformId<\d+>}/users/delete/{userId<\d+>}", name="delete_user", methods={"DELETE"})
      */
-    public function deleteUser(PlatformRepository $platformRepository, int $platformId, UserRepository $userRepository, int $userId,  EntityManagerInterface $manager): Response
+    public function deleteUser(PlatformRepository $platformRepository, int $platformId, UserRepository $userRepository, int $userId, EntityManagerInterface $manager, ExceptionHandler $exception): Response
     {
         $platform = $platformRepository->find($platformId);
         if (!$platform || $platform === null) {
-            $exception = $this->createNotFoundException("Platform $platformId was not found.");
-            return new Response(
-                $exception->getMessage(),
-                $exception->getStatusCode(),
-                ["ContentType" => "application/json"]
-            );
+            $exception->throwJsonException("Platform $platformId was not found");
         }
 
         $user = $userRepository->find($userId);
         if (!$user || $user === null) {
-            $exception = $this->createNotFoundException("User $userId was not found.");
-            return new Response(
-                $exception->getMessage(),
-                $exception->getStatusCode(),
-                ["ContentType" => "application/json"]
-            );
+            $exception->throwJsonException("User $userId was not found");
         }
 
         $platform->removeUser($user);

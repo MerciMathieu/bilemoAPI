@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Classes\ExceptionHandler;
 use App\Repository\PlatformRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,16 +15,11 @@ class UserController extends AbstractController
     /**
      * @Route("/bilemo/platforms/{platformId<\d+>}/users", name="users", methods={"GET"})
      */
-    public function getUsers(PlatformRepository $platformRepository, UserRepository $userRepository, int $platformId, SerializerInterface $serializer): Response
+    public function getUsers(PlatformRepository $platformRepository, UserRepository $userRepository, int $platformId, SerializerInterface $serializer, ExceptionHandler $exception): Response
     {
         $platform = $platformRepository->find($platformId);
-        if (!$platform || $platform == null) {
-            $exception = $this->createNotFoundException("Platform $platformId was not found.");
-            return new Response(
-                $exception->getMessage(),
-                $exception->getStatusCode(),
-                ["ContentType" => "application/json"]
-            );
+        if (!$platform || $platform === null) {
+            $exception->throwJsonException("Platform $platformId was not found");
         }
 
         $users = $userRepository->findBy(['platform' => $platform]);
@@ -40,26 +36,16 @@ class UserController extends AbstractController
     /**
      * @Route("/bilemo/platforms/{platformId<\d+>}/users/{userId<\d+>}", name="user_details", methods={"GET"})
      */
-    public function getUserDetails(UserRepository $userRepository, SerializerInterface $serializer, int $userId, int $platformId, PlatformRepository $platformRepository): Response
+    public function getUserDetails(UserRepository $userRepository, SerializerInterface $serializer, int $userId, int $platformId, PlatformRepository $platformRepository, ExceptionHandler $exception): Response
     {
         $platform = $platformRepository->find($platformId);
-        if (!$platform || $platform == null) {
-            $exception = $this->createNotFoundException("Platform $platformId was not found.");
-            return new Response(
-                $exception->getMessage(),
-                $exception->getStatusCode(),
-                ["ContentType" => "application/json"]
-            );
+        if (!$platform || $platform === null) {
+            $exception->throwJsonException("Platform $platformId was not found");
         }
 
         $user = $userRepository->findBy(['platform' => $platform, 'id' => $userId]);
-        if (!$user || $user == null) {
-            $exception = $this->createNotFoundException("User $userId was not found.");
-            return new Response(
-                $exception->getMessage(),
-                $exception->getStatusCode(),
-                ["ContentType" => "application/json"]
-            );
+        if (!$user || $user === null) {
+            $exception->throwJsonException("User $userId was not found");
         }
 
         $userJson = $serializer->serialize(

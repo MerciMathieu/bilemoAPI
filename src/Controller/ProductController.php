@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Classes\ExceptionHandler;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,6 @@ class ProductController extends AbstractController
             $products,
             'json',
             ['groups' => 'list_products']
-
         );
 
         return new Response($productsJson, 200, ['Content-Type' => 'application/json']);
@@ -29,16 +29,11 @@ class ProductController extends AbstractController
     /**
      * @Route("/bilemo/products/{productId<\d+>}", name="product_details", methods={"GET"})
      */
-    public function getProductDetails(ProductRepository $productRepository, SerializerInterface $serializer, int $productId): Response
+    public function getProductDetails(ProductRepository $productRepository, SerializerInterface $serializer, int $productId, ExceptionHandler $exception): Response
     {
         $product = $productRepository->find($productId);
         if (!$product || $product === null) {
-            $exception = $this->createNotFoundException("Product $productId was not found.");
-            return new Response(
-                $exception->getMessage(),
-                $exception->getStatusCode(),
-                ["ContentType" => "application/json"]
-            );
+            $exception->throwJsonException("Product $productId was not found");
         }
 
         $productJson = $serializer->serialize(
