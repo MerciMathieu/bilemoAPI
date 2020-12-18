@@ -33,7 +33,7 @@ class ProductController extends AbstractController
     {
         $product = $productRepository->find($productId);
         if (!$product || $product === null) {
-            return $exception->throwJsonException("Product $productId was not found");
+            return $exception->throwJsonNotFoundException("Product $productId was not found");
         }
 
         $productJson = $serializer->serialize(

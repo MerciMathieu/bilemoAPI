@@ -19,7 +19,7 @@ class UserController extends AbstractController
     {
         $platform = $platformRepository->find($platformId);
         if (!$platform || $platform === null) {
-            return $exception->throwJsonException("Platform $platformId was not found");
+            return $exception->throwJsonNotFoundException("Platform $platformId was not found");
         }
 
         $users = $userRepository->findBy(['platform' => $platform]);
@@ -40,12 +40,12 @@ class UserController extends AbstractController
     {
         $platform = $platformRepository->find($platformId);
         if (!$platform || $platform === null) {
-            return $exception->throwJsonException("Platform $platformId was not found");
+            return $exception->throwJsonNotFoundException("Platform $platformId was not found");
         }
 
         $user = $userRepository->findBy(['platform' => $platform, 'id' => $userId]);
         if (!$user || $user === null) {
-            return $exception->throwJsonException("User $userId was not found");
+            return $exception->throwJsonNotFoundException("User $userId was not found");
         }
 
         $userJson = $serializer->serialize(
