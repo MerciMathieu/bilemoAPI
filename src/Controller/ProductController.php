@@ -18,7 +18,9 @@ class ProductController extends AbstractController
         $products = $productRepository->findAll();
         $productsJson = $serializer->serialize(
             $products,
-            'json'
+            'json',
+            ['groups' => 'list_products']
+
         );
 
         return new Response($productsJson, 200, ['Content-Type' => 'application/json']);
@@ -32,7 +34,8 @@ class ProductController extends AbstractController
         $product = $productRepository->find($productId);
         $productJson = $serializer->serialize(
             $product,
-            'json'
+            'json',
+            ['groups' => 'list_products_details']
         );
 
         return new Response($productJson, 200, ['Content-Type' => 'application/json']);

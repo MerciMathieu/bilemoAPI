@@ -26,20 +26,19 @@ class UserController extends AbstractController
         );
 
         return new Response($usersJson, 200, ['Content-Type' => 'application/json']);
-
-        // REGARDER COMMENT SONT GÉRÉS METADATA
     }
 
     /**
-     * @Route("/bilemo/users/{userId<\d+>}", name="user_details", methods={"GET"})
+     * @Route("/bilemo/platforms/{platformId<\d+>}/users/{userId<\d+>}", name="user_details", methods={"GET"})
      */
-    public function getUserDetails(UserRepository $userRepository, SerializerInterface $serializer, int $userId): Response
+    public function getUserDetails(UserRepository $userRepository, SerializerInterface $serializer, int $userId, int $platformId, PlatformRepository $platformRepository): Response
     {
-        $user = $userRepository->find($userId);
+        $platform = $platformRepository->find($platformId);
+        $user = $userRepository->findBy(['platform' => $platform, 'id' => $userId]);
         $userJson = $serializer->serialize(
             $user,
             'json',
-            ['groups' => 'list_users']
+            ['groups' => 'list_users_details']
         );
 
         return new Response($userJson, 200, ['Content-Type' => 'application/json']);
