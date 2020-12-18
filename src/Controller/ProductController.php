@@ -20,11 +20,11 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/bilemo/products/{id}", name="product_details", methods={"GET"})
+     * @Route("/bilemo/products/{productId<\d+>}", name="product_details", methods={"GET"})
      */
-    public function getProductDetails(ProductRepository $productRepository, int $id): Response
+    public function getProductDetails(ProductRepository $productRepository, int $productId): Response
     {
-        $product = $productRepository->findOneBy(['id'=>$id]);
+        $product = $productRepository->findOneBy(['id' => $productId]);
 
         return $this->json($product);
     }
