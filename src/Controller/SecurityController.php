@@ -17,7 +17,11 @@ class SecurityController extends AbstractController
     /**
      * @Route("/register", name="register", methods={"POST"})
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
+    public function register(
+        Request $request,
+        UserPasswordEncoderInterface $passwordEncoder,
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator): Response
     {
         $values = json_decode($request->getContent());
         if(!isset($values->username, $values->password)) {
@@ -58,5 +62,12 @@ class SecurityController extends AbstractController
         ]);
 
         return $userdData;
+    }
+
+    /**
+     * @Route("/login_check", name="login_check", methods={"POST"})
+     */
+    public function login_check(Request $request)
+    {
     }
 }
