@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,48 +16,49 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"list_products", "list_products_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
+     * @Groups({"list_products", "list_products_details"})
      */
     private $modelName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
+     * @Groups({"list_products_details"})
      */
     private $modelRef;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank()
+     * @Groups({"list_products_details"})
      */
     private $memory;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
+     * @Groups({"list_products_details"})
      */
     private $color;
 
     /**
      * @ORM\Column(type="float")
-     * @Assert\NotBlank()
+     * @Groups({"list_products", "list_products_details"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="text", length=255)
-     * @Assert\NotBlank()
+     * @Groups({"list_products_details"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="text", length=255, nullable=true)
-     * @Assert\Url()
+     * @Groups({"list_products", "list_products_details"})
      */
     private $urlImage;
 

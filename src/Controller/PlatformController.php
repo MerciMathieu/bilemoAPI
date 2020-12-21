@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Repository\PlatformRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class PlatformController extends AbstractController
+class PlatformController extends ExtendedAbstractController
 {
     /**
      * @Route("/bilemo/platforms", name="platform", methods={"GET"})
@@ -34,24 +33,23 @@ class PlatformController extends AbstractController
     /**
      * @Route("/bilemo/platforms/{platformId<\d+>}/users/create", name="user_create", methods={"POST"})
      */
-    public function addUser(SerializerInterface $serializer, int $platformId, PlatformRepository $platformRepository, Request $request, EntityManagerInterface $manager, ValidatorInterface $validator): Response
+    public function addUser(
+        int $platformId,
+        Request $request,
+        SerializerInterface $serializer,
+        EntityManagerInterface $manager,
+        ValidatorInterface $validator
+    ): Response
     {
-        $platform = $platformRepository->find($platformId);
-
-        if (!$platform || $platform == null ) {
-            $this->createNotFoundException();
+        $platform = $manager->getRepository(PlatformRepository::class)->find($platformId);
+        if (!$platform || $platform === null) {
+            return $this->throwJsonNotFoundException("Platform $platformId was not found");
         }
 
         /** @var User $user */
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-        $violations = $validator->validate($user);
 
-        if ($violations->count()) {
-            $errorMessages = [];
-            foreach ($violations as $error) {
-                $errorMessages[] = $error->getMessage();
-            }
-
+        if ($errorMessages = $this->getValidationErrors($validator, $user)) {
             return new JsonResponse($errorMessages, 400);
         }
 
@@ -65,5 +63,34 @@ class PlatformController extends AbstractController
         );
 
         return new Response($userJson, 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/bilemo/platforms/{platformId<\d+>}/users/delete/{userId<\d+>}", name="delete_user", methods={"DELETE"})
+     */
+    public function deleteUser(
+        int $platformId,
+        int $userId,
+        EntityManagerInterface $manager
+    ): Response
+    {
+        $platform = $manager->getRepository(PlatformRepository::class)->find($platformId);
+        if (!$platform || $platform === null) {
+            return $this->throwJsonNotFoundException("Platform $platformId was not found");
+        }
+
+        $user = $manager->getRepository(UserRepository::class)->find($userId);
+        if (!$user || $user === null) {
+            return $this->throwJsonNotFoundException("User $userId was not found");
+        }
+
+        $platform->removeUser($user);
+        $manager->flush();
+
+        return new Response(
+            "$userId from platform $platformId was deleted.",
+            200,
+            ["ContentType" => "application/json"]
+        );
     }
 }
