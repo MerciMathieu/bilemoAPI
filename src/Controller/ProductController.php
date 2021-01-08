@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class ProductController extends AbstractController
+class ProductController extends ExtendedAbstractController
 {
     /**
      * @Route("/bilemo/products", name="products", methods={"GET"})
@@ -27,13 +27,21 @@ class ProductController extends AbstractController
     /**
      * @Route("/bilemo/products/{productId<\d+>}", name="product_details", methods={"GET"})
      */
-    public function getProductDetails(ProductRepository $productRepository, SerializerInterface $serializer, int $productId): Response
+    public function getProductDetails(
+        int $productId,
+        ProductRepository $productRepository,
+        SerializerInterface $serializer
+    ): Response
     {
         $product = $productRepository->find($productId);
+        if (!$product || $product === null) {
+            return $this->throwJsonNotFoundException("Product $productId was not found");
+        }
+
         $productJson = $serializer->serialize(
-            $product,
-            'json'
-        );
+            $product,'json', [
+                'groups' => ['product_details']
+            ]);
 
         return new Response($productJson, 200, ['Content-Type' => 'application/json']);
     }

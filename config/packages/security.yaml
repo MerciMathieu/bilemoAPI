@@ -23,7 +23,7 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         bilemo:
-            pattern: ^/bilemo
+            pattern: ^/bilemo/clients
             stateless: true
             guard:
                 authenticators:

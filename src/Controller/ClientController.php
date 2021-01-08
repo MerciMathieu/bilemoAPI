@@ -2,35 +2,39 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Repository\ClientRepository;
+use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ClientController extends AbstractController
 {
     /**
-     * @Route("/bilemo/clients/{clientId<\d+>}/users/create", name="user_create", methods={"POST"})
+     * @Route("/register", name="register", methods={"POST"})
      */
-    public function addUser(SerializerInterface $serializer, int $clientId, ClientRepository $clientRepository, Request $request, EntityManagerInterface $manager, ValidatorInterface $validator): Response
+    public function register(
+        Request $request,
+        UserPasswordEncoderInterface $passwordEncoder,
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator): Response
     {
-        $client = $clientRepository->find($clientId);
-
-        if (!$client || $client == null ) {
-            $this->createNotFoundException();
+        $values = json_decode($request->getContent());
+        if(!isset($values->username, $values->password)) {
+            return new Response("You must enter username and password", 500, ['Content-Type' => 'application/json']);
         }
 
-        /** @var User $user */
-        $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-        $violations = $validator->validate($user);
+        $client = new Client();
+        $client->setUsername($values->username);
+        $client->setPassword($passwordEncoder->encodePassword($client, $values->password));
+        $client->setRoles($client->getRoles());
 
-        if ($violations->count()) {
+        $violations = $validator->validate($client);
+        if($violations->count()) {
             $errorMessages = [];
             foreach ($violations as $error) {
                 $errorMessages[] = $error->getMessage();
@@ -39,15 +43,31 @@ class ClientController extends AbstractController
             return new JsonResponse($errorMessages, 400);
         }
 
-        $client->addUser($user);
-        $manager->flush();
+        $entityManager->persist($client);
+        $entityManager->flush();
 
-        $userJson = $serializer->serialize(
-            $user,
-            'json',
-            ['groups' => 'list_users']
-        );
+        return new Response("Access on API created", 201, ['Content-Type' => 'application/json']);
+    }
 
-        return new Response($userJson, 200, ['Content-Type' => 'application/json']);
+    /**
+     * @Route("/login", name="login", methods={"POST"})
+     */
+    public function login(Request $request)
+    {
+        $user = $this->getUser();
+
+        $userdData = $this->json([
+            'username' => $user->getUsername(),
+            'roles' => $user->getRoles()
+        ]);
+
+        return $userdData;
+    }
+
+    /**
+     * @Route("/login_check", name="login_check", methods={"POST"})
+     */
+    public function login_check(Request $request)
+    {
     }
 }
