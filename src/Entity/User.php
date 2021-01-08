@@ -40,11 +40,11 @@ class User
 
     /**
      * @Groups("user")
-     * @ORM\ManyToOne(targetEntity=Platform::class, inversedBy="users")
+     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"list_users"})
      */
-    private $platform;
+    private $client;
 
     public function __construct()
     {
@@ -73,14 +73,14 @@ class User
         return $this->createdAt;
     }
 
-    public function getPlatform(): ?Platform
+    public function getClient(): ?Client
     {
-        return $this->platform;
+        return $this->client;
     }
 
-    public function setPlatform(?Platform $platform): self
+    public function setClient(?Client $client): self
     {
-        $this->platform = $platform;
+        $this->client = $client;
 
         return $this;
     }

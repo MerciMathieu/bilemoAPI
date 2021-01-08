@@ -5,7 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use App\Entity\Platform;
+use App\Entity\Client;
 use App\Entity\Product;
 use Faker;
 
@@ -29,21 +29,21 @@ class AppFixtures extends Fixture
             $manager->persist($product);
         }
 
-        // Platforms
-        for ($i = 0; $i < 5; $i++) {
-            $platform = new Platform();
-            $platform->setName($faker->company)
-                ->setUrl("www." . $platform->getName() . ".com");
-
-            for ($u = 0; $u < 15; $u++) {
-                $user = new User();
-                $user->setEmail($faker->email);
-
-                $platform->addUser($user);
-            }
-
-            $manager->persist($platform);
-        }
+//        // Clients
+//        for ($i = 0; $i < 5; $i++) {
+//            $client = new Client();
+//            $client->setName($faker->company)
+//                ->setUrl("www." . $client->getName() . ".com");
+//
+//            for ($u = 0; $u < 15; $u++) {
+//                $user = new User();
+//                $user->setEmail($faker->email);
+//
+//                $client->addUser($user);
+//            }
+//
+//            $manager->persist($client);
+//        }
 
         $manager->flush();
     }

@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Repository\PlatformRepository;
+use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,12 +12,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/bilemo/platforms/{platformId<\d+>}/users", name="users", methods={"GET"})
+     * @Route("/bilemo/clients/{clientId<\d+>}/users", name="users", methods={"GET"})
      */
-    public function getUsers(PlatformRepository $platformRepository, UserRepository $userRepository, int $platformId, SerializerInterface $serializer): Response
+    public function getUsers(ClientRepository $clientRepository, UserRepository $userRepository, int $clientId, SerializerInterface $serializer): Response
     {
-        $platform = $platformRepository->find($platformId);
-        $users = $userRepository->findBy(['platform' => $platform]);
+        $client = $clientRepository->find($clientId);
+        $users = $userRepository->findBy(['client' => $client]);
 
         $usersJson = $serializer->serialize(
             $users,
@@ -31,7 +31,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/bilemo/users/{userId<\d+>}", name="user_details", methods={"GET"})
+     * @Route("/bilemo/clients/{clientId<\d+>}/users/{userId<\d+>}", name="user_details", methods={"GET"})
      */
     public function getUserDetails(UserRepository $userRepository, SerializerInterface $serializer, int $userId): Response
     {

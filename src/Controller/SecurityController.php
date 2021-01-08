@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\AccessUser;
+use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,12 +28,12 @@ class SecurityController extends AbstractController
             return new Response("You must enter username and password", 500, ['Content-Type' => 'application/json']);
         }
 
-        $accessUser = new AccessUser();
-        $accessUser->setUsername($values->username);
-        $accessUser->setPassword($passwordEncoder->encodePassword($accessUser, $values->password));
-        $accessUser->setRoles($accessUser->getRoles());
+        $client = new Client();
+        $client->setUsername($values->username);
+        $client->setPassword($passwordEncoder->encodePassword($client, $values->password));
+        $client->setRoles($client->getRoles());
 
-        $violations = $validator->validate($accessUser);
+        $violations = $validator->validate($client);
         if($violations->count()) {
             $errorMessages = [];
             foreach ($violations as $error) {
@@ -43,7 +43,7 @@ class SecurityController extends AbstractController
             return new JsonResponse($errorMessages, 400);
         }
 
-        $entityManager->persist($accessUser);
+        $entityManager->persist($client);
         $entityManager->flush();
 
         return new Response("Access on API created", 201, ['Content-Type' => 'application/json']);

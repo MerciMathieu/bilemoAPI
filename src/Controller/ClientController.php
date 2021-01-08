@@ -3,8 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\PlatformRepository;
-use App\Repository\UserRepository;
+use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,31 +13,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class PlatformController extends AbstractController
+class ClientController extends AbstractController
 {
     /**
-     * @Route("/bilemo/platforms", name="platforms_list", methods={"GET"})
+     * @Route("/bilemo/clients/{clientId<\d+>}/users/create", name="user_create", methods={"POST"})
      */
-    public function getPlatformsList(PlatformRepository $platformRepository, SerializerInterface $serializer): Response
+    public function addUser(SerializerInterface $serializer, int $clientId, ClientRepository $clientRepository, Request $request, EntityManagerInterface $manager, ValidatorInterface $validator): Response
     {
-        $platforms = $platformRepository->findAll();
-        $platformsJson = $serializer->serialize(
-            $platforms,
-            'json',
-            ['groups' => 'list_platforms']
-        );
+        $client = $clientRepository->find($clientId);
 
-        return new Response($platformsJson, 200, ['Content-Type' => 'application/json']);
-    }
-
-    /**
-     * @Route("/bilemo/platforms/{platformId<\d+>}/users/create", name="user_create", methods={"POST"})
-     */
-    public function addUser(SerializerInterface $serializer, int $platformId, PlatformRepository $platformRepository, Request $request, EntityManagerInterface $manager, ValidatorInterface $validator): Response
-    {
-        $platform = $platformRepository->find($platformId);
-
-        if (!$platform || $platform == null ) {
+        if (!$client || $client == null ) {
             $this->createNotFoundException();
         }
 
@@ -55,7 +39,7 @@ class PlatformController extends AbstractController
             return new JsonResponse($errorMessages, 400);
         }
 
-        $platform->addUser($user);
+        $client->addUser($user);
         $manager->flush();
 
         $userJson = $serializer->serialize(
