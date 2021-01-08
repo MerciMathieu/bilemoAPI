@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ClientController extends AbstractController
@@ -46,6 +47,7 @@ class ClientController extends AbstractController
         $client->setUsername($values->username);
         $client->setPassword($passwordEncoder->encodePassword($client, $values->password));
         $client->setPlatformName($values->platform_name);
+        $client->setRoles($client->getRoles());
         $client->setUrl($values->url);
 
         $violations = $validator->validate($client);
