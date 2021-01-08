@@ -24,14 +24,28 @@ class ClientController extends AbstractController
         ValidatorInterface $validator): Response
     {
         $values = json_decode($request->getContent());
-        if(!isset($values->username, $values->password)) {
-            return new Response("You must enter username and password", 500, ['Content-Type' => 'application/json']);
+
+        if(!isset($values->username)) {
+            return new Response("First, enter your account 'username'", 500, ['Content-Type' => 'application/json']);
+        }
+
+        if(!isset($values->password)) {
+            return new Response("Now enter a 'password'", 500, ['Content-Type' => 'application/json']);
+        }
+
+        if(!isset($values->platform_name)) {
+            return new Response("Good, enter your 'platform_name'", 500, ['Content-Type' => 'application/json']);
+        }
+
+        if(!isset($values->url)) {
+            return new Response("Enter the platform URL", 500, ['Content-Type' => 'application/json']);
         }
 
         $client = new Client();
         $client->setUsername($values->username);
         $client->setPassword($passwordEncoder->encodePassword($client, $values->password));
-        $client->setRoles($client->getRoles());
+        $client->setPlatformName($values->platform_name);
+        $client->setUrl($values->url);
 
         $violations = $validator->validate($client);
         if($violations->count()) {
@@ -46,7 +60,7 @@ class ClientController extends AbstractController
         $entityManager->persist($client);
         $entityManager->flush();
 
-        return new Response("Access on API created", 201, ['Content-Type' => 'application/json']);
+        return new Response("The $values->platform_name was created with an access account to the API.", 201, ['Content-Type' => 'application/json']);
     }
 
     /**

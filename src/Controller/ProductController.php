@@ -16,10 +16,9 @@ class ProductController extends ExtendedAbstractController
     public function getProducts(ProductRepository $productRepository, SerializerInterface $serializer): Response
     {
         $products = $productRepository->findAll();
-        $productsJson = $serializer->serialize(
-            $products,
-            'json'
-        );
+        $productsJson = $serializer->serialize($products,'json', [
+                'groups' => ['products_list']
+            ]);
 
         return new Response($productsJson, 200, ['Content-Type' => 'application/json']);
     }

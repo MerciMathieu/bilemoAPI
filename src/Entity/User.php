@@ -19,22 +19,22 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"list_users", "list_users_details"})
+     * @Groups({"users_list", "user_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="You have to add an email address")
+     * @Assert\NotBlank(message="You must enter the user email")
      * @Assert\Email(message="Email is not valid")
-     * @Groups({"list_users", "list_users_details"})
+     * @Groups({"users_list", "user_details"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Type("\DateTimeInterface")
-     * @Groups({"list_users_details"})
+     * @Groups({"users_list"})
      */
     private $createdAt;
 
@@ -42,7 +42,7 @@ class User
      * @Groups("user")
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"list_users_details"})
+     * @Groups({"users_list"})
      */
     private $client;
 

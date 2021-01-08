@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
  * @UniqueEntity("username", message="This username already exists")
+ * @UniqueEntity("platformName", message="This platform name already exists")
  */
 class Client implements UserInterface
 {
@@ -26,33 +27,36 @@ class Client implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Vous devez entrer un nom")
+     * @Assert\NotBlank(message="You must enter your platform's name")
      */
-    private $name;
+    private $platformName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Url(message="L'url que vous avez entré n'est pas valide")
+     * @Assert\Url(message="URL is not valid")
+     * @Assert\NotBlank(message="You must enter your platform's URL")
      */
     private $url;
 
     /**
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="You must enter the username account, you will connect the API with it.")
      * @ORM\Column(type="string", length=180)
+     * @Assert\Length(min="4")
      */
     private $username;
+
+    /**
+     * @var string The hashed password
+     * @ORM\Column(type="string")
+     * @Assert\Length(min="4")
+     * @Assert\NotBlank(message="You must enter your account's password")
+     */
+    private $password;
 
     /**
      * @ORM\Column(type="json")
      */
     private $roles = [];
-
-    /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     */
-    private $password;
 
     /**
      * @Groups("client_users")
@@ -70,19 +74,19 @@ class Client implements UserInterface
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getPlatformName(): string
     {
-        return $this->name;
+        return $this->platformName;
     }
 
-    public function setName(string $name): self
+    public function setPlatformName(string $platformName): self
     {
-        $this->name = $name;
+        $this->platformName = $platformName;
 
         return $this;
     }
 
-    public function getUrl(): ?string
+    public function getUrl(): string
     {
         return $this->url;
     }

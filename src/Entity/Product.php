@@ -22,49 +22,42 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Groups({"products_list", "product_details"})
      */
     private $modelName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Groups({"product_details"})
      */
     private $modelRef;
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank()
      * @Groups({"product_details"})
      */
     private $memory;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Groups({"products_list", "product_details"})
      */
     private $color;
 
     /**
      * @ORM\Column(type="float")
-     * @Assert\NotBlank()
      * @Groups({"products_list", "product_details"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="text", length=255)
-     * @Assert\NotBlank()
      * @Groups({"product_details"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="text", length=255, nullable=true)
-     * @Assert\Url()
      * @Groups({"products_list", "product_details"})
      */
     private $urlImage;

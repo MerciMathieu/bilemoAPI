@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,15 +23,11 @@ class UserController extends ExtendedAbstractController
         $client = $clientRepository->find($clientId);
         $users = $userRepository->findBy(['client' => $client]);
 
-        $usersJson = $serializer->serialize(
-            $users,
-            'json',
-            ['groups' => 'list_users']
-        );
+        $usersJson = $serializer->serialize($users,'json', [
+            'groups' => 'users_list'
+        ]);
 
         return new Response($usersJson, 200, ['Content-Type' => 'application/json']);
-
-        // REGARDER COMMENT SONT GÉRÉS METADATA
     }
 
     /**
@@ -41,11 +36,9 @@ class UserController extends ExtendedAbstractController
     public function getUserDetails(UserRepository $userRepository, SerializerInterface $serializer, int $userId): Response
     {
         $user = $userRepository->find($userId);
-        $userJson = $serializer->serialize(
-            $user,
-            'json',
-            ['groups' => 'list_users']
-        );
+        $userJson = $serializer->serialize($user,'json', [
+            'groups' => 'user_details'
+        ]);
 
         return new Response($userJson, 200, ['Content-Type' => 'application/json']);
     }
@@ -53,7 +46,13 @@ class UserController extends ExtendedAbstractController
     /**
      * @Route("/bilemo/clients/{clientId<\d+>}/users/create", name="user_create", methods={"POST"})
      */
-    public function addUser(SerializerInterface $serializer, int $clientId, ClientRepository $clientRepository, Request $request, EntityManagerInterface $manager, ValidatorInterface $validator): Response
+    public function addUser(
+        int $clientId,
+        SerializerInterface $serializer,
+        ClientRepository $clientRepository,
+        Request $request,
+        EntityManagerInterface $manager,
+        ValidatorInterface $validator): Response
     {
         $client = $clientRepository->find($clientId);
 
