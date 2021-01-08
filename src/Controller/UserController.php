@@ -16,14 +16,14 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController extends ExtendedAbstractController
 {
     /**
-     * @Route("/bilemo/clients/{clientId<\d+>}/users", name="users", methods={"GET"})
+     * @Route("/api/clients/{clientId<\d+>}/users", name="users", methods={"GET"})
      */
     public function getUsers(ClientRepository $clientRepository, UserRepository $userRepository, int $clientId, SerializerInterface $serializer): Response
     {
         $client = $clientRepository->find($clientId);
         $users = $userRepository->findBy(['client' => $client]);
 
-        $usersJson = $serializer->serialize($users,'json', [
+        $usersJson = $serializer->serialize($users, 'json', [
             'groups' => 'users_list'
         ]);
 
@@ -31,12 +31,12 @@ class UserController extends ExtendedAbstractController
     }
 
     /**
-     * @Route("/bilemo/clients/{clientId<\d+>}/users/{userId<\d+>}", name="user_details", methods={"GET"})
+     * @Route("/api/clients/{clientId<\d+>}/users/{userId<\d+>}", name="user_details", methods={"GET"})
      */
     public function getUserDetails(UserRepository $userRepository, SerializerInterface $serializer, int $userId): Response
     {
         $user = $userRepository->find($userId);
-        $userJson = $serializer->serialize($user,'json', [
+        $userJson = $serializer->serialize($user, 'json', [
             'groups' => 'user_details'
         ]);
 
@@ -44,7 +44,7 @@ class UserController extends ExtendedAbstractController
     }
 
     /**
-     * @Route("/bilemo/clients/{clientId<\d+>}/users/create", name="user_create", methods={"POST"})
+     * @Route("/api/clients/{clientId<\d+>}/users/create", name="user_create", methods={"POST"})
      */
     public function addUser(
         int $clientId,
@@ -52,11 +52,12 @@ class UserController extends ExtendedAbstractController
         ClientRepository $clientRepository,
         Request $request,
         EntityManagerInterface $manager,
-        ValidatorInterface $validator): Response
+        ValidatorInterface $validator
+    ): Response
     {
         $client = $clientRepository->find($clientId);
 
-        if (!$client || $client == null ) {
+        if (!$client || $client == null) {
             $this->createNotFoundException();
         }
 
@@ -76,11 +77,9 @@ class UserController extends ExtendedAbstractController
         $client->addUser($user);
         $manager->flush();
 
-        $userJson = $serializer->serialize(
-            $user,
-            'json',
-            ['groups' => 'list_users']
-        );
+        $userJson = $serializer->serialize($user, 'json', [
+            'groups' => 'list_users'
+        ]);
 
         return new Response($userJson, 200, ['Content-Type' => 'application/json']);
     }

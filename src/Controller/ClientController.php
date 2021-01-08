@@ -15,29 +15,30 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ClientController extends AbstractController
 {
     /**
-     * @Route("/register", name="register", methods={"POST"})
+     * @Route("/api/register", name="register", methods={"POST"})
      */
     public function register(
         Request $request,
         UserPasswordEncoderInterface $passwordEncoder,
         EntityManagerInterface $entityManager,
-        ValidatorInterface $validator): Response
+        ValidatorInterface $validator
+    ): Response
     {
         $values = json_decode($request->getContent());
 
-        if(!isset($values->username)) {
+        if (!isset($values->username)) {
             return new Response("First, enter your account 'username'", 500, ['Content-Type' => 'application/json']);
         }
 
-        if(!isset($values->password)) {
+        if (!isset($values->password)) {
             return new Response("Now enter a 'password'", 500, ['Content-Type' => 'application/json']);
         }
 
-        if(!isset($values->platform_name)) {
+        if (!isset($values->platform_name)) {
             return new Response("Good, enter your 'platform_name'", 500, ['Content-Type' => 'application/json']);
         }
 
-        if(!isset($values->url)) {
+        if (!isset($values->url)) {
             return new Response("Enter the platform URL", 500, ['Content-Type' => 'application/json']);
         }
 
@@ -48,7 +49,7 @@ class ClientController extends AbstractController
         $client->setUrl($values->url);
 
         $violations = $validator->validate($client);
-        if($violations->count()) {
+        if ($violations->count()) {
             $errorMessages = [];
             foreach ($violations as $error) {
                 $errorMessages[] = $error->getMessage();
@@ -64,7 +65,7 @@ class ClientController extends AbstractController
     }
 
     /**
-     * @Route("/login", name="login", methods={"POST"})
+     * @Route("/api/login", name="login", methods={"POST"})
      */
     public function login(Request $request)
     {
