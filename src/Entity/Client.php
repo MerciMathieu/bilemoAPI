@@ -27,19 +27,19 @@ class Client implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="You must enter your platform's name")
+     * @Assert\NotBlank(message="Enter your 'platform_name'")
      */
     private $platformName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Url(message="URL is not valid")
-     * @Assert\NotBlank(message="You must enter your platform's URL")
+     * @Assert\Url(message="URL is not valid. (Ex: https://domain.com)")
+     * @Assert\NotBlank(message="Enter the platform URL")
      */
     private $url;
 
     /**
-     * @Assert\NotBlank(message="You must enter the username account, you will connect the API with it.")
+     * @Assert\NotBlank(message="Enter your account 'username'")
      * @ORM\Column(type="string", length=180)
      * @Assert\Length(min="4")
      */
@@ -49,7 +49,7 @@ class Client implements UserInterface
      * @var string The hashed password
      * @ORM\Column(type="string")
      * @Assert\Length(min="4")
-     * @Assert\NotBlank(message="You must enter your account's password")
+     * @Assert\NotBlank(message="Enter a 'password'")
      */
     private $password;
 
@@ -184,7 +184,6 @@ class Client implements UserInterface
      */
     public function getSalt()
     {
-        // not needed when using the "bcrypt" algorithm in security.yaml
     }
 
     /**
@@ -192,7 +191,5 @@ class Client implements UserInterface
      */
     public function eraseCredentials()
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 }

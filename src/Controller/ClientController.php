@@ -22,33 +22,10 @@ class ClientController extends AbstractController
         Request $request,
         UserPasswordEncoderInterface $passwordEncoder,
         EntityManagerInterface $entityManager,
-        ValidatorInterface $validator
-    ): Response
-    {
-        $values = json_decode($request->getContent());
-
-        if (!isset($values->username)) {
-            return new Response("First, enter your account 'username'", 500, ['Content-Type' => 'application/json']);
-        }
-
-        if (!isset($values->password)) {
-            return new Response("Now enter a 'password'", 500, ['Content-Type' => 'application/json']);
-        }
-
-        if (!isset($values->platform_name)) {
-            return new Response("Good, enter your 'platform_name'", 500, ['Content-Type' => 'application/json']);
-        }
-
-        if (!isset($values->url)) {
-            return new Response("Enter the platform URL", 500, ['Content-Type' => 'application/json']);
-        }
-
-        $client = new Client();
-        $client->setUsername($values->username);
-        $client->setPassword($passwordEncoder->encodePassword($client, $values->password));
-        $client->setPlatformName($values->platform_name);
-        $client->setRoles($client->getRoles());
-        $client->setUrl($values->url);
+        ValidatorInterface $validator,
+        SerializerInterface $serializer
+    ): Response {
+        $client = $serializer->deserialize($request->getContent(), Client::class, 'json');
 
         $violations = $validator->validate($client);
         if ($violations->count()) {
@@ -63,28 +40,6 @@ class ClientController extends AbstractController
         $entityManager->persist($client);
         $entityManager->flush();
 
-        return new Response("The $values->platform_name was created with an access account to the API.", 201, ['Content-Type' => 'application/json']);
-    }
-
-    /**
-     * @Route("/api/login", name="login", methods={"POST"})
-     */
-    public function login(Request $request)
-    {
-        $user = $this->getUser();
-
-        $userdData = $this->json([
-            'username' => $user->getUsername(),
-            'roles' => $user->getRoles()
-        ]);
-
-        return $userdData;
-    }
-
-    /**
-     * @Route("/login_check", name="login_check", methods={"POST"})
-     */
-    public function login_check(Request $request)
-    {
+        return new Response("The '" . $client->getPlatformName() . "' platform was created with an access account to the API.", 201, ['Content-Type' => 'application/json']);
     }
 }
