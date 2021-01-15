@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ClientController extends AbstractController
+class ClientController extends ExtendedAbstractController
 {
     /**
      * @Route("/api/register", name="register", methods={"POST"})
@@ -25,21 +25,20 @@ class ClientController extends AbstractController
         ValidatorInterface $validator,
         SerializerInterface $serializer
     ): Response {
+        if ($this->isGranted('ROLE_USER')) {
+            throw $this->createAccessDeniedException('You are already granted');
+        }
+
         $client = $serializer->deserialize($request->getContent(), Client::class, 'json');
 
-        $violations = $validator->validate($client);
-        if ($violations->count()) {
-            $errorMessages = [];
-            foreach ($violations as $error) {
-                $errorMessages[] = $error->getMessage();
-            }
-
+        if ($this->getValidationErrors($validator, $client)) {
+            $errorMessages = $this->getValidationErrors($validator, $client);
             return new JsonResponse($errorMessages, 400);
         }
 
         $entityManager->persist($client);
         $entityManager->flush();
 
-        return new Response("The '" . $client->getPlatformName() . "' platform was created with an access account to the API.", 201, ['Content-Type' => 'application/json']);
+        return new Response("The client number '" . $client->getId() . "' was created.", 201, ['Content-Type' => 'application/json']);
     }
 }

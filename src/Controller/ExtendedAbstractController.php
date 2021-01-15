@@ -8,17 +8,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class ExtendedAbstractController extends AbstractController
 {
-    protected function throwJsonNotFoundException(string $message = "Resource was not found"): Response
-    {
-        $exception = $this->createNotFoundException($message);
-
-        return new Response(
-            $exception->getMessage(),
-            $exception->getStatusCode(),
-            ["ContentType" => "application/json"]
-        );
-    }
-
     protected function getValidationErrors(ValidatorInterface $validator, $entity): array
     {
         $errorMessages = [];

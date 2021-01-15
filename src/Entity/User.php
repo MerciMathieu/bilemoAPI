@@ -25,7 +25,7 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="You must enter the user email")
+     * @Assert\NotBlank(message="You must enter the user email you want to add")
      * @Assert\Email(message="Email is not valid")
      * @Groups({"users_list", "user_details"})
      */
@@ -56,7 +56,7 @@ class User
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -73,12 +73,12 @@ class User
         return $this->createdAt;
     }
 
-    public function getClient(): ?Client
+    public function getClient(): Client
     {
         return $this->client;
     }
 
-    public function setClient(?Client $client): self
+    public function setClient(Client $client): self
     {
         $this->client = $client;
 

@@ -26,13 +26,14 @@ class ProductController extends ExtendedAbstractController
      * @Route("/api/products/{productId<\d+>}", name="product_details", methods={"GET"})
      */
     public function getProductDetails(
-        int $productId,
         ProductRepository $productRepository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        int $productId
     ): Response {
         $product = $productRepository->find($productId);
+
         if (!$product || $product === null) {
-            return $this->throwJsonNotFoundException("Product $productId was not found");
+            throw $this->createNotFoundException();
         }
 
         $productJson = $serializer->serialize($product, 'json', [
