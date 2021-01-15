@@ -28,9 +28,9 @@ class ClientController extends ExtendedAbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $client = $serializer->deserialize($request->getContent(), Client::class, 'json');
-
         /** @var Client $client */
+        $client = $serializer->deserialize($request->getContent(), Client::class, 'json');
+        $client->setRoles($client->getRoles());
         $client->setPassword($passwordEncoder->encodePassword($client, $client->getPassword()));
 
         if ($this->getValidationErrors($validator, $client)) {

@@ -33,7 +33,7 @@ class AppFixtures extends Fixture
         $client->setUsername('admin')
             ->setPlatformName('admin')
             ->setUrl("admin@test.fr")
-            ->setPassword(hash('md5', 'nimda'))
+            ->setPassword(password_hash('nimda', 'argon2i'))
             ->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
 
         $manager->persist($client);

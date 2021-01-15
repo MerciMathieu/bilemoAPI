@@ -34,7 +34,7 @@ class Client implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Url(message="URL is not valid. (Ex: https://domain.com)")
-     * @Assert\NotBlank(message="Enter the platform URL")
+     * @Assert\NotBlank(message="Enter the platform 'url'")
      */
     private $url;
 

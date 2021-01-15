@@ -1,7 +1,7 @@
 security:
   encoders:
     App\Entity\Client:
-      algorithm: md5
+      algorithm: argon2i
   # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
   providers:
     # used to reload user from session & other features (e.g. switch_user)
@@ -47,4 +47,4 @@ security:
     - { path: ^/api/register, roles: [IS_AUTHENTICATED_FULLY, ROLE_ADMIN] }
 
   role_hierarchy:
-    ROLE_ADMIN:       ROLE_USER
+    ROLE_ADMIN: ROLE_USER
