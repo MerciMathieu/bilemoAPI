@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,11 +24,14 @@ class ClientController extends ExtendedAbstractController
         ValidatorInterface $validator,
         SerializerInterface $serializer
     ): Response {
-        if ($this->isGranted('ROLE_USER')) {
-            throw $this->createAccessDeniedException('You are already granted');
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
         }
 
         $client = $serializer->deserialize($request->getContent(), Client::class, 'json');
+
+        /** @var Client $client */
+        $client->setPassword($passwordEncoder->encodePassword($client, $client->getPassword()));
 
         if ($this->getValidationErrors($validator, $client)) {
             $errorMessages = $this->getValidationErrors($validator, $client);

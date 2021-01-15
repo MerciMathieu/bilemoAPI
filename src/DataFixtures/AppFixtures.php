@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Client;
@@ -16,7 +15,7 @@ class AppFixtures extends Fixture
         $faker = Faker\Factory::create('fr_FR');
 
         // Products
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $product = new Product();
             $product->setColor($faker->safeColorName)
                 ->setDescription($faker->realText(300, 2))
@@ -29,21 +28,15 @@ class AppFixtures extends Fixture
             $manager->persist($product);
         }
 
-//        // Clients
-//        for ($i = 0; $i < 5; $i++) {
-//            $client = new Client();
-//            $client->setName($faker->company)
-//                ->setUrl("www." . $client->getName() . ".com");
-//
-//            for ($u = 0; $u < 15; $u++) {
-//                $user = new User();
-//                $user->setEmail($faker->email);
-//
-//                $client->addUser($user);
-//            }
-//
-//            $manager->persist($client);
-//        }
+//      Admin user
+        $client = new Client();
+        $client->setUsername('admin')
+            ->setPlatformName('admin')
+            ->setUrl("admin@test.fr")
+            ->setPassword(hash('md5', 'nimda'))
+            ->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
+
+        $manager->persist($client);
 
         $manager->flush();
     }

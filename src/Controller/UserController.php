@@ -22,8 +22,8 @@ class UserController extends ExtendedAbstractController
         ClientRepository $clientRepository,
         UserRepository $userRepository,
         SerializerInterface $serializer,
-        int $clientId): Response
-    {
+        int $clientId
+    ): Response {
         $client = $clientRepository->find($clientId);
         $users = $userRepository->findBy(['client' => $client]);
 
@@ -46,12 +46,12 @@ class UserController extends ExtendedAbstractController
         UserRepository $userRepository,
         SerializerInterface $serializer,
         int $clientId,
-        int $userId): Response
-    {
+        int $userId
+    ): Response {
         $user = $userRepository->find($userId);
 
-        if ($clientId !== $this->getUser()->getId() || $user->getClient() !== $this->getUser()->getId())
-        {
+        if ($clientId !== $this->getUser()->getId() ||
+            $user->getClient() !== $this->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
 
@@ -72,8 +72,7 @@ class UserController extends ExtendedAbstractController
         EntityManagerInterface $manager,
         ValidatorInterface $validator,
         int $clientId
-    ): Response
-    {
+    ): Response {
         if ($clientId !== $this->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
