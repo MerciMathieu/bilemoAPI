@@ -50,8 +50,12 @@ class UserController extends ExtendedAbstractController
     ): Response {
         $user = $userRepository->find($userId);
 
+        if (!$userId || $user === null) {
+            throw $this->createNotFoundException();
+        }
+
         if ($clientId !== $this->getUser()->getId() ||
-            $user->getClient() !== $this->getUser()->getId()) {
+            $user->getClient()->getId() !== $this->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
 
@@ -86,9 +90,8 @@ class UserController extends ExtendedAbstractController
         }
 
         $client = $clientRepository->find($clientId);
-
-        $user->setClient($client);
         $client->addUser($user);
+
         $manager->flush();
 
         return new Response('User created', 200, ['Content-Type' => 'application/json']);

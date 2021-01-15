@@ -33,7 +33,7 @@ class Client implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Url(message="URL is not valid. (Ex: https://domain.com)")
+     * @Assert\Url(message="URL is not valid. (Ex: http://domain.com)")
      * @Assert\NotBlank(message="Enter the platform 'url'")
      */
     private $url;
@@ -46,7 +46,6 @@ class Client implements UserInterface
     private $username;
 
     /**
-     * @var string The hashed password
      * @ORM\Column(type="string")
      * @Assert\Length(min="4")
      * @Assert\NotBlank(message="Enter a 'password'")

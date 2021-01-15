@@ -34,15 +34,13 @@ class User
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Type("\DateTimeInterface")
-     * @Groups({"users_list"})
+     * @Groups({"user_details"})
      */
     private $createdAt;
 
     /**
-     * @Groups("user")
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"users_list"})
      */
     private $client;
 

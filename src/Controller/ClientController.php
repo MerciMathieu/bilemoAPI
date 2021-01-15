@@ -30,13 +30,14 @@ class ClientController extends ExtendedAbstractController
 
         /** @var Client $client */
         $client = $serializer->deserialize($request->getContent(), Client::class, 'json');
-        $client->setRoles($client->getRoles());
-        $client->setPassword($passwordEncoder->encodePassword($client, $client->getPassword()));
 
         if ($this->getValidationErrors($validator, $client)) {
             $errorMessages = $this->getValidationErrors($validator, $client);
             return new JsonResponse($errorMessages, 400);
         }
+
+        $client->setRoles($client->getRoles());
+        $client->setPassword($passwordEncoder->encodePassword($client, $client->getPassword()));
 
         $entityManager->persist($client);
         $entityManager->flush();
