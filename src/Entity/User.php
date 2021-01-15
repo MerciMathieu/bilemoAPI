@@ -25,7 +25,7 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="You must enter the user email you want to add")
+     * @Assert\NotBlank(message="You must enter 'email'")
      * @Assert\Email(message="Email is not valid")
      * @Groups({"users_list", "user_details"})
      */
