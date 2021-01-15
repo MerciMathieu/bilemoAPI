@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity("email", message="L'email que vous avez entré existe déjà!")
+ * @UniqueEntity("email", message="This user already exists")
  */
 class User
 {
@@ -19,32 +19,32 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"list_users", "list_users_details"})
+     * @Groups({"users_list", "user_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="You have to add an email address")
+     * @Assert\NotBlank(message="You must enter the user email")
      * @Assert\Email(message="Email is not valid")
-     * @Groups({"list_users", "list_users_details"})
+     * @Groups({"users_list", "user_details"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Type("\DateTimeInterface")
-     * @Groups({"list_users_details"})
+     * @Groups({"users_list"})
      */
     private $createdAt;
 
     /**
      * @Groups("user")
-     * @ORM\ManyToOne(targetEntity=Platform::class, inversedBy="users")
+     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"list_users_details"})
+     * @Groups({"users_list"})
      */
-    private $platform;
+    private $client;
 
     public function __construct()
     {
@@ -73,14 +73,14 @@ class User
         return $this->createdAt;
     }
 
-    public function getPlatform(): ?Platform
+    public function getClient(): ?Client
     {
-        return $this->platform;
+        return $this->client;
     }
 
-    public function setPlatform(?Platform $platform): self
+    public function setClient(?Client $client): self
     {
-        $this->platform = $platform;
+        $this->client = $client;
 
         return $this;
     }

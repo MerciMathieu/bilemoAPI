@@ -2,66 +2,84 @@
 
 namespace App\Controller;
 
-use App\Repository\PlatformRepository;
+use App\Entity\User;
+use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends ExtendedAbstractController
 {
     /**
-     * @Route("/bilemo/platforms/{platformId<\d+>}/users", name="users", methods={"GET"})
+     * @Route("/api/clients/{clientId<\d+>}/users", name="users", methods={"GET"})
      */
-    public function getUsers(
-        int $platformId,
-        PlatformRepository $platformRepository,
-        UserRepository $userRepository,
-        SerializerInterface $serializer
-    ): Response
+    public function getUsers(ClientRepository $clientRepository, UserRepository $userRepository, int $clientId, SerializerInterface $serializer): Response
     {
-        $platform = $platformRepository->find($platformId);
-        if (!$platform || $platform === null) {
-            return $this->throwJsonNotFoundException("Platform $platformId was not found");
-        }
+        $client = $clientRepository->find($clientId);
+        $users = $userRepository->findBy(['client' => $client]);
 
-        $users = $userRepository->findBy(['platform' => $platform]);
-
-        $usersJson = $serializer->serialize(
-            $users,
-            'json',
-            ['groups' => 'list_users']
-        );
+        $usersJson = $serializer->serialize($users, 'json', [
+            'groups' => 'users_list'
+        ]);
 
         return new Response($usersJson, 200, ['Content-Type' => 'application/json']);
     }
 
     /**
-     * @Route("/bilemo/platforms/{platformId<\d+>}/users/{userId<\d+>}", name="user_details", methods={"GET"})
+     * @Route("/api/clients/{clientId<\d+>}/users/{userId<\d+>}", name="user_details", methods={"GET"})
      */
-    public function getUserDetails(
-        int $userId,
-        int $platformId,
-        UserRepository $userRepository,
+    public function getUserDetails(UserRepository $userRepository, SerializerInterface $serializer, int $userId): Response
+    {
+        $user = $userRepository->find($userId);
+        $userJson = $serializer->serialize($user, 'json', [
+            'groups' => 'user_details'
+        ]);
+
+        return new Response($userJson, 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/clients/{clientId<\d+>}/users/create", name="user_create", methods={"POST"})
+     */
+    public function addUser(
+        int $clientId,
         SerializerInterface $serializer,
-        PlatformRepository $platformRepository
+        ClientRepository $clientRepository,
+        Request $request,
+        EntityManagerInterface $manager,
+        ValidatorInterface $validator
     ): Response
     {
-        $platform = $platformRepository->find($platformId);
-        if (!$platform || $platform === null) {
-            return $this->throwJsonNotFoundException("Platform $platformId was not found");
+        $client = $clientRepository->find($clientId);
+
+        if (!$client || $client == null) {
+            $this->createNotFoundException();
         }
 
-        $user = $userRepository->findBy(['platform' => $platform, 'id' => $userId]);
-        if (!$user || $user === null) {
-            return $this->throwJsonNotFoundException("User $userId was not found");
+        /** @var User $user */
+        $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+        $violations = $validator->validate($user);
+
+        if ($violations->count()) {
+            $errorMessages = [];
+            foreach ($violations as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+
+            return new JsonResponse($errorMessages, 400);
         }
 
-        $userJson = $serializer->serialize(
-            $user,
-            'json',
-            ['groups' => 'list_users_details']
-        );
+        $client->addUser($user);
+        $manager->flush();
+
+        $userJson = $serializer->serialize($user, 'json', [
+            'groups' => 'list_users'
+        ]);
 
         return new Response($userJson, 200, ['Content-Type' => 'application/json']);
     }
