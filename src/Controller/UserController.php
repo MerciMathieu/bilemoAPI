@@ -45,7 +45,6 @@ class UserController extends ExtendedAbstractController
      * @IsGranted("ROLE_USER")
      */
     public function getUserDetails(
-        ClientRepository $clientRepository,
         UserRepository $userRepository,
         SerializerInterface $serializer,
         int $clientId,
