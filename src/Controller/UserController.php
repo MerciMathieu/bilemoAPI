@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ class UserController extends ExtendedAbstractController
 {
     /**
      * @Route("/api/clients/{clientId<\d+>}/users", name="users", methods={"GET"})
+     * @IsGranted("ROLE_USER")
      */
     public function getUsers(
         ClientRepository $clientRepository,
@@ -40,6 +42,7 @@ class UserController extends ExtendedAbstractController
 
     /**
      * @Route("/api/clients/{clientId<\d+>}/users/{userId<\d+>}", name="user_details", methods={"GET"})
+     * @IsGranted("ROLE_USER")
      */
     public function getUserDetails(
         ClientRepository $clientRepository,
@@ -68,6 +71,7 @@ class UserController extends ExtendedAbstractController
 
     /**
      * @Route("/api/clients/{clientId<\d+>}/users/create", name="user_create", methods={"POST"})
+     * @IsGranted("ROLE_USER")
      */
     public function addClientUser(
         SerializerInterface $serializer,
