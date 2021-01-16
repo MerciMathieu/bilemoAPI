@@ -11,10 +11,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
 
 class ClientController extends ExtendedAbstractController
 {
     /**
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/api/register", name="register", methods={"POST"})
      */
     public function register(
@@ -24,10 +27,6 @@ class ClientController extends ExtendedAbstractController
         ValidatorInterface $validator,
         SerializerInterface $serializer
     ): Response {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var Client $client */
         $client = $serializer->deserialize($request->getContent(), Client::class, 'json');
 
