@@ -6,13 +6,40 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  * @UniqueEntity("email", message="This user already exists")
+ * @Hateoas\Relation(
+ *     "self",
+ *     href = @Hateoas\Route(
+ *          "user_details",
+ *          parameters = { "clientId" = "expr(object.getClient().getId())", "userId" = "expr(object.getId())" },
+ *          absolute = true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"users_list"}),
+ * )
+ * @Hateoas\Relation(
+ *     "Users list",
+ *     href = @Hateoas\Route(
+ *          "users",
+ *          parameters = { "clientId" = "expr(object.getClient().getId())"},
+ *          absolute = true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"user_details"}),
+ * )
+ * @Hateoas\Relation(
+ *     "Create user",
+ *     href = @Hateoas\Route(
+ *          "user_create",
+ *          parameters = { "clientId" = "expr(object.getClient().getId())"},
+ *          absolute = true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"users_list"}),
+ * )
  */
 class User
 {
