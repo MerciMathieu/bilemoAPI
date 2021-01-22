@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,20 +26,11 @@ class ProductController extends ExtendedAbstractController
     }
 
     /**
-     * @Route("/api/products/{productId<\d+>}", name="product_details", methods={"GET"})
+     * @Route("/api/products/{id<\d+>}", name="product_details", methods={"GET"})
      * @IsGranted("ROLE_USER")
      */
-    public function getProductDetails(
-        ProductRepository $productRepository,
-        SerializerInterface $serializer,
-        int $productId
-    ): Response {
-        $product = $productRepository->find($productId);
-
-        if (!$product || $product === null) {
-            throw $this->createNotFoundException();
-        }
-
+    public function getProductDetails(Product $product, SerializerInterface $serializer): Response
+    {
         $productJson = $serializer->serialize($product, 'json', [
             'groups' => ['product_details']
         ]);
