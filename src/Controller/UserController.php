@@ -6,12 +6,13 @@ use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends ExtendedAbstractController
@@ -33,9 +34,13 @@ class UserController extends ExtendedAbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $usersJson = $serializer->serialize($users, 'json', [
-            'groups' => 'users_list'
-        ]);
+        $usersJson = $serializer->serialize(
+            $users,
+            'json',
+            SerializationContext::create()->setGroups(
+                ['users_list']
+            )
+        );
 
         return new Response($usersJson, 200, ['Content-Type' => 'application/json']);
     }
@@ -61,9 +66,13 @@ class UserController extends ExtendedAbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $userJson = $serializer->serialize($user, 'json', [
-            'groups' => 'user_details'
-        ]);
+        $userJson = $serializer->serialize(
+            $user,
+            'json',
+            SerializationContext::create()->setGroups(
+                ['user_details']
+            )
+        );
 
         return new Response($userJson, 200, ['Content-Type' => 'application/json']);
     }

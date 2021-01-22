@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -15,49 +15,49 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"products_list", "product_details"})
+     * @Serializer\Groups({"products_list", "product_details"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"products_list", "product_details"})
+     * @Serializer\Groups({"products_list", "product_details"})
      */
     private $modelName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"product_details"})
+     * @Serializer\Groups({"product_details"})
      */
     private $modelRef;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"product_details"})
+     * @Serializer\Groups({"product_details"})
      */
     private $memory;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"products_list", "product_details"})
+     * @Serializer\Groups({"products_list", "product_details"})
      */
     private $color;
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"products_list", "product_details"})
+     * @Serializer\Groups({"products_list", "product_details"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="text", length=255)
-     * @Groups({"product_details"})
+     * @Serializer\Groups({"product_details"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="text", length=255, nullable=true)
-     * @Groups({"products_list", "product_details"})
+     * @Serializer\Groups({"products_list", "product_details"})
      */
     private $urlImage;
 

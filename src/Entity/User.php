@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -19,7 +20,7 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"users_list", "user_details"})
+     * @Serializer\Groups({"users_list", "user_details"})
      */
     private $id;
 
@@ -27,14 +28,14 @@ class User
      * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank(message="You must enter 'email'")
      * @Assert\Email(message="Email is not valid")
-     * @Groups({"users_list", "user_details"})
+     * @Serializer\Groups({"users_list", "user_details"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Type("\DateTimeInterface")
-     * @Groups({"user_details"})
+     * @Serializer\Groups({"user_details"})
      */
     private $createdAt;
 
