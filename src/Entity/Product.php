@@ -19,7 +19,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     exclusion = @Hateoas\Exclusion(groups={"products_list"}),
  * )
  * @Hateoas\Relation(
- *     "Products list",
+ *     "products_list",
  *     href = @Hateoas\Route(
  *          "products",
  *          absolute = true

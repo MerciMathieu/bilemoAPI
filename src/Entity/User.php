@@ -23,7 +23,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     exclusion = @Hateoas\Exclusion(groups={"users_list"}),
  * )
  * @Hateoas\Relation(
- *     "Users list",
+ *     "users_list",
  *     href = @Hateoas\Route(
  *          "users",
  *          parameters = { "clientId" = "expr(object.getClient().getId())"},
