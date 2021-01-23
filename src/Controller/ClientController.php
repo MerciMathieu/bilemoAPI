@@ -16,7 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class ClientController extends ExtendedAbstractController
 {
     /**
-     * @Route("/api/register", name="register", methods={"POST"})
+     * @Route("/api/clients/register", name="register", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
     public function register(

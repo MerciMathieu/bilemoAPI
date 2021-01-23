@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\User;
-use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,22 +19,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController extends ExtendedAbstractController
 {
     /**
-     * @Route("/api/clients/{clientId<\d+>}/users", name="users", methods={"GET"})
+     * @Route("/api/clients/{id<\d+>}/users", name="users", methods={"GET"})
      * @IsGranted("ROLE_USER")
      */
-    public function getUsers(
-        ClientRepository $clientRepository,
-        UserRepository $userRepository,
-        SerializerInterface $serializer,
-        int $clientId
-    ): Response {
-        $client = $clientRepository->find($clientId);
-        $users = $userRepository->findBy(['client' => $client]);
-
-        if ($clientId !== $this->getUser()->getId()) {
+    public function getUsers(Client $client, UserRepository $userRepository, SerializerInterface $serializer): Response
+    {
+        if ($client->getId() !== $this->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
 
+        $users = $userRepository->findBy(['client' => $client]);
         $usersJson = $serializer->serialize(
             $users,
             'json',
@@ -46,23 +41,14 @@ class UserController extends ExtendedAbstractController
     }
 
     /**
-     * @Route("/api/clients/{clientId<\d+>}/users/{userId<\d+>}", name="user_details", methods={"GET"})
+     * @Route("/api/clients/{client_id<\d+>}/users/{user_id<\d+>}", name="user_details", methods={"GET"})
      * @IsGranted("ROLE_USER")
+     * @ParamConverter("client", options={"mapping": {"client_id": "id"}})
+     * @ParamConverter("user", options={"mapping": {"user_id": "id"}})
      */
-    public function getUserDetails(
-        UserRepository $userRepository,
-        SerializerInterface $serializer,
-        int $clientId,
-        int $userId
-    ): Response {
-        $user = $userRepository->find($userId);
-
-        if (!$userId || $user === null) {
-            throw $this->createNotFoundException();
-        }
-
-        if ($clientId !== $this->getUser()->getId() ||
-            $user->getClient()->getId() !== $this->getUser()->getId()) {
+    public function getUserDetails(Client $client, User $user, SerializerInterface $serializer): Response
+    {
+        if ($client->getId() !== $this->getUser()->getId() || $user->getClient()->getId() !== $this->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
 
@@ -78,18 +64,17 @@ class UserController extends ExtendedAbstractController
     }
 
     /**
-     * @Route("/api/clients/{clientId<\d+>}/users/create", name="user_create", methods={"POST"})
+     * @Route("/api/clients/{id<\d+>}/users/create", name="user_create", methods={"POST"})
      * @IsGranted("ROLE_USER")
      */
     public function addClientUser(
+        Client $client,
         SerializerInterface $serializer,
-        ClientRepository $clientRepository,
         Request $request,
         EntityManagerInterface $manager,
-        ValidatorInterface $validator,
-        int $clientId
+        ValidatorInterface $validator
     ): Response {
-        if ($clientId !== $this->getUser()->getId()) {
+        if ($client->getId() !== $this->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
 
@@ -101,9 +86,7 @@ class UserController extends ExtendedAbstractController
             return new JsonResponse($errorMessages, 400);
         }
 
-        $client = $clientRepository->find($clientId);
         $client->addUser($user);
-
         $manager->flush();
 
         return new Response('User created', 200, ['Content-Type' => 'application/json']);
