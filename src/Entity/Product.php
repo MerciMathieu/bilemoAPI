@@ -13,7 +13,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     "self",
  *     href = @Hateoas\Route(
  *          "product_details",
- *          parameters = { "productId" = "expr(object.getId())" },
+ *          parameters = { "id" = "expr(object.getId())" },
  *          absolute = true
  *     ),
  *     exclusion = @Hateoas\Exclusion(groups={"products_list"}),
