@@ -9,12 +9,17 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
+use OpenApi\Annotations as OA;
 
 class ProductController extends ExtendedAbstractController
 {
     /**
      * @Route("/api/products", name="products", methods={"GET"})
      * @IsGranted("ROLE_USER")
+     * @OA\Response(
+     *   response=200,
+     *   description="Returns the products' list"
+     * )
      */
     public function getProducts(ProductRepository $productRepository, SerializerInterface $serializer): Response
     {
@@ -34,6 +39,10 @@ class ProductController extends ExtendedAbstractController
     /**
      * @Route("/api/products/{id<\d+>}", name="product_details", methods={"GET"})
      * @IsGranted("ROLE_USER")
+     * @OA\Response(
+     *   response=200,
+     *   description="Returns the products' details"
+     * )
      */
     public function getProductDetails(Product $product, SerializerInterface $serializer): Response
     {

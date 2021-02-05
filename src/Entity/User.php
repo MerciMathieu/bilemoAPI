@@ -17,8 +17,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     "self",
  *     href = @Hateoas\Route(
  *          "user_details",
- *          parameters = { "client_id" = "expr(object.getClient().getId())",
- *                         "user_id" = "expr(object.getId())" },
+ *          parameters = { "id" = "expr(object.getId())" },
  *          absolute = true
  *     ),
  *     exclusion = @Hateoas\Exclusion(groups={"users_list"}),
@@ -27,7 +26,6 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     "users_list",
  *     href = @Hateoas\Route(
  *          "users",
- *          parameters = { "id" = "expr(object.getClient().getId())"},
  *          absolute = true
  *     ),
  *     exclusion = @Hateoas\Exclusion(groups={"user_details"}),
@@ -36,7 +34,6 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     "Create user",
  *     href = @Hateoas\Route(
  *          "user_create",
- *          parameters = { "id" = "expr(object.getClient().getId())"},
  *          absolute = true
  *     ),
  *     exclusion = @Hateoas\Exclusion(groups={"users_list"}),

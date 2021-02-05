@@ -146,6 +146,19 @@
     "namshi/jose": {
         "version": "7.2.3"
     },
+    "nelmio/api-doc-bundle": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "c8e0c38e1a280ab9e37587a8fa32b251d5bc1c94"
+        },
+        "files": [
+            "config/packages/nelmio_api_doc.yaml",
+            "config/routes/nelmio_api_doc.yaml"
+        ]
+    },
     "nikic/php-parser": {
         "version": "v4.10.2"
     },
@@ -202,6 +215,9 @@
         "files": [
             "config/packages/security_checker.yaml"
         ]
+    },
+    "symfony/asset": {
+        "version": "v5.1.11"
     },
     "symfony/cache": {
         "version": "v5.1.8"
@@ -342,6 +358,9 @@
             "config/packages/prod/monolog.yaml",
             "config/packages/test/monolog.yaml"
         ]
+    },
+    "symfony/options-resolver": {
+        "version": "v5.1.11"
     },
     "symfony/orm-pack": {
         "version": "v2.0.0"
@@ -502,5 +521,8 @@
         "files": [
             "config/packages/bazinga_hateoas.yaml"
         ]
+    },
+    "zircote/swagger-php": {
+        "version": "3.1.0"
     }
 }

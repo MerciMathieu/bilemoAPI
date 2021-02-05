@@ -1,0 +1,51 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Bilemo API
+            description: The Bilemo API for developers - by Mathieu Delclos
+            version: 1.0.0
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+            schemas:
+                User:
+                    properties:
+                        id:
+                            type: integer
+                        email:
+                            type: string
+                        createdAt:
+                            type: date
+                Product:
+                    properties:
+                        id:
+                            type: integer
+                        modelName:
+                            type: string
+                        modelRef:
+                            type: date
+                        memory:
+                            type: integer
+                        color:
+                            type: string
+                        price:
+                            type: int
+                        description:
+                            type: text
+                        urlImage:
+                            type: string
+                    # Both properties are required
+                    required:
+                        - username
+                        - password
+        security:
+            - Bearer: []
+
+    areas: # to filter documented areas
+        default:
+            path_patterns:
+                - ^/api/products
+                - ^/api/users
