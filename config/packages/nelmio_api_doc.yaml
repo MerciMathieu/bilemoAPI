@@ -11,11 +11,31 @@ nelmio_api_doc:
                     scheme: bearer
                     bearerFormat: JWT
             schemas:
-                Client:
+                User:
                     properties:
-                        username:
+                        id:
+                            type: integer
+                        email:
                             type: string
-                        password:
+                        createdAt:
+                            type: date
+                Product:
+                    properties:
+                        id:
+                            type: integer
+                        modelName:
+                            type: string
+                        modelRef:
+                            type: date
+                        memory:
+                            type: integer
+                        color:
+                            type: string
+                        price:
+                            type: int
+                        description:
+                            type: text
+                        urlImage:
                             type: string
                     # Both properties are required
                     required:
@@ -27,7 +47,6 @@ nelmio_api_doc:
     areas: # to filter documented areas
         default:
             path_patterns:
-                - ^/api/clients(?!/register$)
+                - ^/api/users
                 - ^/api/products
                 - ^/api/doc.json
-

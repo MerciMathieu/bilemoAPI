@@ -2,31 +2,32 @@
 
 namespace App\Controller;
 
-use App\Entity\Client;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use OpenApi\Annotations as OA;
 
 class UserController extends ExtendedAbstractController
 {
     /**
-     * @Route("/api/clients/{id<\d+>}/users", name="users", methods={"GET"})
+     * @Route("/api/users", name="users", methods={"GET"})
      * @IsGranted("ROLE_USER")
+     * @OA\Response(
+     *   response=200,
+     *   description="Returns the users' list, corresponding to a Client."
+     * )
      */
-    public function getUsers(Client $client, UserRepository $userRepository, SerializerInterface $serializer): Response
+    public function getUsers(UserRepository $userRepository, SerializerInterface $serializer): Response
     {
-        if ($client->getId() !== $this->getUser()->getId()) {
-            throw $this->createAccessDeniedException();
-        }
+        $client = $this->getUser();
 
         $users = $userRepository->findBy(['client' => $client]);
         $usersJson = $serializer->serialize(
@@ -41,14 +42,18 @@ class UserController extends ExtendedAbstractController
     }
 
     /**
-     * @Route("/api/clients/{client_id<\d+>}/users/{user_id<\d+>}", name="user_details", methods={"GET"})
+     * @Route("/api/users/{id<\d+>}", name="user_details", methods={"GET"})
      * @IsGranted("ROLE_USER")
-     * @ParamConverter("client", options={"mapping": {"client_id": "id"}})
-     * @ParamConverter("user", options={"mapping": {"user_id": "id"}})
+     * @OA\Response(
+     *   response=200,
+     *   description="Returns the user's details."
+     * )
      */
-    public function getUserDetails(Client $client, User $user, SerializerInterface $serializer): Response
+    public function getUserDetails(User $user, SerializerInterface $serializer): Response
     {
-        if ($client->getId() !== $this->getUser()->getId() || $user->getClient()->getId() !== $this->getUser()->getId()) {
+        $client = $this->getUser();
+
+        if ($user->getClient()->getId() !== $client->getId()) {
             throw $this->createAccessDeniedException();
         }
 
@@ -64,19 +69,20 @@ class UserController extends ExtendedAbstractController
     }
 
     /**
-     * @Route("/api/clients/{id<\d+>}/users/create", name="user_create", methods={"POST"})
+     * @Route("/api/users", name="user_create", methods={"POST"})
      * @IsGranted("ROLE_USER")
+     * @OA\Response(
+     *   response=200,
+     *   description="Add an user."
+     * )
      */
     public function addClientUser(
-        Client $client,
         SerializerInterface $serializer,
         Request $request,
         EntityManagerInterface $manager,
         ValidatorInterface $validator
     ): Response {
-        if ($client->getId() !== $this->getUser()->getId()) {
-            throw $this->createAccessDeniedException();
-        }
+        $client = $this->getUser();
 
         /** @var User $user */
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
