@@ -117,6 +117,6 @@ class UserController extends ExtendedAbstractController
         $client->removeUser($user);
         $manager->flush();
 
-        return new Response("User deleted.",200, ["ContentType" => "application/json"]);
+        return new Response("User deleted.", 200, ["ContentType" => "application/json"]);
     }
 }

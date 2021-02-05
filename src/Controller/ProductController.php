@@ -6,6 +6,7 @@ use App\Entity\Product;
 use App\Repository\ProductRepository;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
@@ -21,7 +22,7 @@ class ProductController extends ExtendedAbstractController
      *   description="Returns the products' list"
      * )
      */
-    public function getProducts(ProductRepository $productRepository, SerializerInterface $serializer): Response
+    public function getProducts(ProductRepository $productRepository, SerializerInterface $serializer, Request $request): Response
     {
         $products = $productRepository->findAll();
 
@@ -33,7 +34,11 @@ class ProductController extends ExtendedAbstractController
             )
         );
 
-        return new Response($productsJson, 200, ['Content-Type' => 'application/json']);
+        $response = new Response($productsJson, 200, ['Content-Type' => 'application/json']);
+
+        $this->cacheInit($response, $request);
+
+        return $response;
     }
 
     /**
@@ -44,7 +49,7 @@ class ProductController extends ExtendedAbstractController
      *   description="Returns the products' details"
      * )
      */
-    public function getProductDetails(Product $product, SerializerInterface $serializer): Response
+    public function getProductDetails(Product $product, SerializerInterface $serializer, Request $request): Response
     {
         $productJson = $serializer->serialize(
             $product,
@@ -54,6 +59,10 @@ class ProductController extends ExtendedAbstractController
             )
         );
 
-        return new Response($productJson, 200, ['Content-Type' => 'application/json']);
+        $response = new Response($productJson, 200, ['Content-Type' => 'application/json']);
+
+        $this->cacheInit($response, $request);
+
+        return $response;
     }
 }

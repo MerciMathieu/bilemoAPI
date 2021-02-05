@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -20,5 +21,16 @@ abstract class ExtendedAbstractController extends AbstractController
         }
 
         return $errorMessages;
+    }
+
+    protected function cacheInit(Response $response, Request $request): Response
+    {
+        $response->setEtag(md5($response->getContent()))
+            ->setPublic()
+            ->setMaxAge(3600)
+            ->isNotModified($request);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
+
+        return $response;
     }
 }
