@@ -47,6 +47,5 @@ nelmio_api_doc:
     areas: # to filter documented areas
         default:
             path_patterns:
-                - ^/api/users
                 - ^/api/products
-                - ^/api/doc.json
+                - ^/api/users
