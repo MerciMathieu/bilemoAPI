@@ -69,11 +69,11 @@ class UserController extends ExtendedAbstractController
     }
 
     /**
-     * @Route("/api/users", name="user_create", methods={"POST"})
+     * @Route("/api/users", name="add_user", methods={"POST"})
      * @IsGranted("ROLE_USER")
      * @OA\Response(
      *   response=200,
-     *   description="Add an user."
+     *   description="Add a user."
      * )
      */
     public function addClientUser(
@@ -95,6 +95,28 @@ class UserController extends ExtendedAbstractController
         $client->addUser($user);
         $manager->flush();
 
-        return new Response('User created', 200, ['Content-Type' => 'application/json']);
+        return new Response("User created", 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/users/{id<\d+>}", name="delete_user", methods={"DELETE"})
+     * @IsGranted("ROLE_USER")
+     * @OA\Response(
+     *   response=200,
+     *   description="Remove a user."
+     * )
+     */
+    public function deleteClientUser(User $user, EntityManagerInterface $manager): Response
+    {
+        $client = $this->getUser();
+
+        if ($user->getClient()->getId() !== $client->getId()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $client->removeUser($user);
+        $manager->flush();
+
+        return new Response("User deleted.",200, ["ContentType" => "application/json"]);
     }
 }

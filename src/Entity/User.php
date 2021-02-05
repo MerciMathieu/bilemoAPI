@@ -33,7 +33,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @Hateoas\Relation(
  *     "Create user",
  *     href = @Hateoas\Route(
- *          "user_create",
+ *          "add_user",
  *          absolute = true
  *     ),
  *     exclusion = @Hateoas\Exclusion(groups={"users_list"}),
@@ -102,7 +102,7 @@ class User
         return $this->client;
     }
 
-    public function setClient(Client $client): self
+    public function setClient(?Client $client): self
     {
         $this->client = $client;
 
