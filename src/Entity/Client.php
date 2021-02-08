@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
  * @UniqueEntity("username", message="This username already exists")
- * @UniqueEntity("platformName", message="This platform name already exists")
+ * @UniqueEntity("clientName", message="This client name already exists")
  */
 class Client implements UserInterface
 {
@@ -27,14 +27,14 @@ class Client implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Enter your 'platform_name'")
+     * @Assert\NotBlank(message="Enter your 'client_name'")
      */
-    private $platformName;
+    private $clientName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Url(message="URL is not valid. (Ex: http://domain.com)")
-     * @Assert\NotBlank(message="Enter the platform 'url'")
+     * @Assert\NotBlank(message="Enter the client's platform 'url'")
      */
     private $url;
 
@@ -73,14 +73,14 @@ class Client implements UserInterface
         return $this->id;
     }
 
-    public function getPlatformName(): string
+    public function getClientName(): string
     {
-        return $this->platformName;
+        return $this->clientName;
     }
 
-    public function setPlatformName(string $platformName): self
+    public function setClientName(string $clientName): self
     {
-        $this->platformName = $platformName;
+        $this->clientName = $clientName;
 
         return $this;
     }

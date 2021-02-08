@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,7 +15,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
+/**
+ * @OA\Tag(name="Users")
+ */
 class UserController extends ExtendedAbstractController
 {
     /**
@@ -22,7 +27,8 @@ class UserController extends ExtendedAbstractController
      * @IsGranted("ROLE_USER")
      * @OA\Response(
      *   response=200,
-     *   description="Returns the users' list, corresponding to a Client."
+     *   description="Returns the users' list, corresponding to a Client.",
+     *   @Model(type=User::class, groups={"users_list"})
      * )
      */
     public function getUsers(UserRepository $userRepository, SerializerInterface $serializer): Response
@@ -38,7 +44,7 @@ class UserController extends ExtendedAbstractController
             )
         );
 
-        return new Response($usersJson, 200, ['Content-Type' => 'application/json']);
+        return new Response($usersJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -46,7 +52,8 @@ class UserController extends ExtendedAbstractController
      * @IsGranted("ROLE_USER")
      * @OA\Response(
      *   response=200,
-     *   description="Returns the user's details."
+     *   description="Returns the user's details.",
+     *   @Model(type=User::class, groups={"user_details"})
      * )
      */
     public function getUserDetails(User $user, SerializerInterface $serializer): Response
@@ -65,14 +72,19 @@ class UserController extends ExtendedAbstractController
             )
         );
 
-        return new Response($userJson, 200, ['Content-Type' => 'application/json']);
+        return new Response($userJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
      * @Route("/api/users", name="add_user", methods={"POST"})
      * @IsGranted("ROLE_USER")
+     * @OA\RequestBody(
+     *   description="Enter the user's email you want to add",
+     *   @Model(type=User::class, groups={"add_user"}),
+     *   required=true
+     * )
      * @OA\Response(
-     *   response=200,
+     *   response=201,
      *   description="Add a user."
      * )
      */
@@ -85,24 +97,28 @@ class UserController extends ExtendedAbstractController
         $client = $this->getUser();
 
         /** @var User $user */
-        $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+        $user = $serializer->deserialize($request->getContent(), User::class, 'json', DeserializationContext::create()->setGroups(['add_user']));
 
         if ($this->getValidationErrors($validator, $user)) {
             $errorMessages = $this->getValidationErrors($validator, $user);
-            return new JsonResponse($errorMessages, 400);
+            return new JsonResponse($errorMessages, Response::HTTP_NOT_FOUND);
         }
 
         $client->addUser($user);
         $manager->flush();
 
-        return new Response("User created", 200, ['Content-Type' => 'application/json']);
+        $userJson = $serializer->serialize($user, 'json', SerializationContext::create()->setGroups(
+            ['user_details']
+        ));
+
+        return new Response($userJson, Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
     }
 
     /**
      * @Route("/api/users/{id<\d+>}", name="delete_user", methods={"DELETE"})
      * @IsGranted("ROLE_USER")
      * @OA\Response(
-     *   response=200,
+     *   response=204,
      *   description="Remove a user."
      * )
      */
@@ -117,6 +133,6 @@ class UserController extends ExtendedAbstractController
         $client->removeUser($user);
         $manager->flush();
 
-        return new Response("User deleted.", 200, ["ContentType" => "application/json"]);
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 }
