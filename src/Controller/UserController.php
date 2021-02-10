@@ -85,7 +85,8 @@ class UserController extends ExtendedAbstractController
      * )
      * @OA\Response(
      *   response=201,
-     *   description="Add a user."
+     *   description="Add a user.",
+     *   @Model(type=User::class, groups={"user_details"})
      * )
      */
     public function addClientUser(
@@ -119,7 +120,7 @@ class UserController extends ExtendedAbstractController
      * @IsGranted("ROLE_USER")
      * @OA\Response(
      *   response=204,
-     *   description="Remove a user."
+     *   description="Remove a user"
      * )
      */
     public function deleteClientUser(User $user, EntityManagerInterface $manager): Response
