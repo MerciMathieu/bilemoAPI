@@ -31,7 +31,7 @@ class AppFixtures extends Fixture
 //      Admin user
         $client = new Client();
         $client->setUsername('admin')
-            ->setPlatformName('admin')
+            ->setClientName('admin')
             ->setUrl("admin@test.fr")
             ->setPassword(password_hash('nimda', 'argon2i'))
             ->setRoles(['ROLE_ADMIN', 'ROLE_USER']);

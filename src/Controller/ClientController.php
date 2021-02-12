@@ -31,7 +31,7 @@ class ClientController extends ExtendedAbstractController
 
         if ($this->getValidationErrors($validator, $client)) {
             $errorMessages = $this->getValidationErrors($validator, $client);
-            return new JsonResponse($errorMessages, 400);
+            return new JsonResponse($errorMessages, Response::HTTP_NOT_FOUND);
         }
 
         $client->setRoles($client->getRoles());
@@ -40,6 +40,6 @@ class ClientController extends ExtendedAbstractController
         $entityManager->persist($client);
         $entityManager->flush();
 
-        return new Response("The client number '" . $client->getId() . "' was created.", 201, ['Content-Type' => 'application/json']);
+        return new Response($client, Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
     }
 }

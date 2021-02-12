@@ -36,7 +36,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *          "add_user",
  *          absolute = true
  *     ),
- *     exclusion = @Hateoas\Exclusion(groups={"users_list"}),
+ *     exclusion = @Hateoas\Exclusion(groups={"add_user"}),
  * )
  */
 class User
@@ -53,7 +53,7 @@ class User
      * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank(message="You must enter 'email'")
      * @Assert\Email(message="Email is not valid")
-     * @Serializer\Groups({"users_list", "user_details"})
+     * @Serializer\Groups({"users_list", "user_details", "add_user"})
      */
     private $email;
 

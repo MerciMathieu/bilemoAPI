@@ -5,12 +5,17 @@ namespace App\Controller;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
 use JMS\Serializer\SerializationContext;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
 use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
+/**
+ * @OA\Tag(name="Products")
+ */
 class ProductController extends ExtendedAbstractController
 {
     /**
@@ -18,8 +23,10 @@ class ProductController extends ExtendedAbstractController
      * @IsGranted("ROLE_USER")
      * @OA\Response(
      *   response=200,
-     *   description="Returns the products' list"
+     *   description="Returns the products' list",
+     *   @Model(type=Product::class, groups={"products_list"})
      * )
+     * @Cache(maxage="1 hour", public=true)
      */
     public function getProducts(ProductRepository $productRepository, SerializerInterface $serializer): Response
     {
@@ -33,7 +40,9 @@ class ProductController extends ExtendedAbstractController
             )
         );
 
-        return new Response($productsJson, 200, ['Content-Type' => 'application/json']);
+        $response = new Response($productsJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);
+
+        return $response;
     }
 
     /**
@@ -41,8 +50,10 @@ class ProductController extends ExtendedAbstractController
      * @IsGranted("ROLE_USER")
      * @OA\Response(
      *   response=200,
-     *   description="Returns the products' details"
+     *   description="Returns the products' details",
+     *   @Model(type=Product::class, groups={"product_details"})
      * )
+     * @Cache(maxage="1 hour", public=true)
      */
     public function getProductDetails(Product $product, SerializerInterface $serializer): Response
     {
@@ -54,6 +65,8 @@ class ProductController extends ExtendedAbstractController
             )
         );
 
-        return new Response($productJson, 200, ['Content-Type' => 'application/json']);
+        $response = new Response($productJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);
+
+        return $response;
     }
 }
