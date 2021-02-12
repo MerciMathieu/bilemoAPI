@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Pagination\PaginationFactory;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\DeserializationContext;
@@ -31,15 +32,22 @@ class UserController extends ExtendedAbstractController
      *   @Model(type=User::class, groups={"users_list"})
      * )
      */
-    public function getUsers(UserRepository $userRepository, SerializerInterface $serializer): Response
+    public function getUsers(
+        UserRepository $userRepository,
+        SerializerInterface $serializer,
+        PaginationFactory $paginationFactory,
+        Request $request): Response
     {
         $client = $this->getUser();
+        $query = $userRepository->findAllQueryBuilder();
 
-        $users = $userRepository->findBy(['client' => $client]);
+        $paginatedCollection = $paginationFactory->createCollection($query, $request, 'users');
+
+//        $users = $userRepository->findBy(['client' => $client]);
         $usersJson = $serializer->serialize(
-            $users,
-            'json',
-            SerializationContext::create()->setGroups(['users_list'])
+            $paginatedCollection,
+            'json'
+//            SerializationContext::create()->setGroups(['users_list'])
         );
 
         return new Response($usersJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);
