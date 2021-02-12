@@ -10,7 +10,6 @@ use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
@@ -32,9 +31,8 @@ class ProductController extends ExtendedAbstractController
      * )
      * @Cache(maxage="1 hour", public=true)
      */
-    public function getProducts(ProductRepository $productRepository, SerializerInterface $serializer, Request $request): Response
+    public function getProducts(ProductRepository $productRepository, SerializerInterface $serializer, int $page): Response
     {
-        $page = $request->query->get('page', 1);
         $route = 'products';
         $routeParams = array();
         $createLinkUrl = function($targetPage) use ($route, $routeParams) {
@@ -58,7 +56,8 @@ class ProductController extends ExtendedAbstractController
 
         $paginatedCollection = new PaginatedCollection(
             $products,
-            $pagerfanta->getNbResults()
+            $pagerfanta->getNbResults(),
+            $page
         );
 
         $paginatedCollection->addLink('self', $createLinkUrl($page));
