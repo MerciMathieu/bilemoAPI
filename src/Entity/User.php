@@ -70,11 +70,6 @@ class User
      */
     private $client;
 
-    public function __construct()
-    {
-        $this->createdAt = new \DateTime('NOW');
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -88,6 +83,13 @@ class User
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function setCreatedAt(): self
+    {
+        $this->createdAt = new \DateTime('NOW');
 
         return $this;
     }

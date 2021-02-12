@@ -27,7 +27,11 @@ class ClientController extends ExtendedAbstractController
         SerializerInterface $serializer
     ): Response {
         /** @var Client $client */
-        $client = $serializer->deserialize($request->getContent(), Client::class, 'json');
+        $client = $serializer->deserialize(
+            $request->getContent(),
+            Client::class,
+            'json'
+        );
 
         if ($this->getValidationErrors($validator, $client)) {
             $errorMessages = $this->getValidationErrors($validator, $client);

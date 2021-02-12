@@ -98,7 +98,13 @@ class UserController extends ExtendedAbstractController
         $client = $this->getUser();
 
         /** @var User $user */
-        $user = $serializer->deserialize($request->getContent(), User::class, 'json', DeserializationContext::create()->setGroups(['add_user']));
+        $user = $serializer->deserialize(
+            $request->getContent(),
+            User::class,
+            'json',
+            DeserializationContext::create()->setGroups(['add_user'])
+        );
+        $user->setCreatedAt();
 
         if ($this->getValidationErrors($validator, $user)) {
             $errorMessages = $this->getValidationErrors($validator, $user);
@@ -108,9 +114,11 @@ class UserController extends ExtendedAbstractController
         $client->addUser($user);
         $manager->flush();
 
-        $userJson = $serializer->serialize($user, 'json', SerializationContext::create()->setGroups(
-            ['user_details']
-        ));
+        $userJson = $serializer->serialize(
+            $user,
+            'json',
+            SerializationContext::create()->setGroups(['user_details'])
+        );
 
         return new Response($userJson, Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
     }
