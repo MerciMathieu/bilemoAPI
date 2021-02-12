@@ -44,6 +44,11 @@ class ClientController extends ExtendedAbstractController
         $entityManager->persist($client);
         $entityManager->flush();
 
-        return new Response($client, Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
+        $clientJson = $serializer->serialize(
+            $client,
+            'json'
+        );
+
+        return new Response($clientJson, Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
     }
 }

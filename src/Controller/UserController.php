@@ -39,9 +39,7 @@ class UserController extends ExtendedAbstractController
         $usersJson = $serializer->serialize(
             $users,
             'json',
-            SerializationContext::create()->setGroups(
-                ['users_list']
-            )
+            SerializationContext::create()->setGroups(['users_list'])
         );
 
         return new Response($usersJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);
