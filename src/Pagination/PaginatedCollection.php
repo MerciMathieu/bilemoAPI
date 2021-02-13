@@ -27,7 +27,7 @@ class PaginatedCollection
      */
     private $_links = [];
 
-    public function __construct ($items, $total, $page)
+    public function __construct($items, $total, $page)
     {
         $this->total = $total;
         $this->items = $items;

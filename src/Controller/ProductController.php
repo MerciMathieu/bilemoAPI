@@ -30,10 +30,12 @@ class ProductController extends ExtendedAbstractController
      * )
      * @Cache(maxage="1 hour", public=true)
      */
-    public function getProducts(ProductRepository $productRepository,
+    public function getProducts(
+        ProductRepository $productRepository,
         SerializerInterface $serializer,
         Request $request,
-        PaginationFactory $paginationFactory): Response
+        PaginationFactory $paginationFactory
+    ): Response
     {
         $query = $productRepository->findAllQueryBuilder();
 
@@ -41,7 +43,7 @@ class ProductController extends ExtendedAbstractController
         $productsJson = $serializer->serialize(
             $paginatedCollection,
             'json',
-          SerializationContext::create()->setGroups(['products_list'])
+            SerializationContext::create()->setGroups(['products_list'])
         );
 
         $response = new Response($productsJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);

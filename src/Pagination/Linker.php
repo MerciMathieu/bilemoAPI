@@ -4,7 +4,7 @@ namespace App\Pagination;
 
 class Linker
 {
-    public function __construct ($items, $total)
+    public function __construct($items, $total)
     {
         $this->total = $total;
         $this->items = $items;
