@@ -20,13 +20,13 @@ class PaginationFactory
 
     public function createCollection(QueryBuilder $query, Request $request, $route, array $routeParams = [])
     {
-        $page = $request->query->get('page', 1);
+        $page = (int) $request->query->get('page', 1);
 
-        $adapter = new QueryAdapter($query);
+        $adapter = new QueryAdapter($query, false);
         $pagerfanta = new Pagerfanta($adapter);
         $pagerfanta->setMaxPerPage(5);
         $pagerfanta->setCurrentPage($page);
-
+//        dump($adapter); exit;
         $products = [];
         foreach ($pagerfanta->getCurrentPageResults() as $product) {
             $products[] = $product;

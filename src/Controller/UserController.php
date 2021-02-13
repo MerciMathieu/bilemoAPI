@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\User;
 use App\Pagination\PaginationFactory;
 use App\Repository\UserRepository;
@@ -38,16 +39,16 @@ class UserController extends ExtendedAbstractController
         PaginationFactory $paginationFactory,
         Request $request): Response
     {
+        /** @var Client $client */
         $client = $this->getUser();
-        $query = $userRepository->findAllQueryBuilder();
+        $query = $userRepository->findByClientQueryBuilder($client);
 
         $paginatedCollection = $paginationFactory->createCollection($query, $request, 'users');
 
-//        $users = $userRepository->findBy(['client' => $client]);
         $usersJson = $serializer->serialize(
             $paginatedCollection,
-            'json'
-//            SerializationContext::create()->setGroups(['users_list'])
+            'json',
+            SerializationContext::create()->setGroups(['users_list'])
         );
 
         return new Response($usersJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);
