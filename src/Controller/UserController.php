@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -93,7 +94,8 @@ class UserController extends ExtendedAbstractController
         SerializerInterface $serializer,
         Request $request,
         EntityManagerInterface $manager,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        UserPasswordEncoderInterface $passwordEncoder
     ): Response {
         $client = $this->getUser();
 
@@ -104,6 +106,9 @@ class UserController extends ExtendedAbstractController
             $errorMessages = $this->getValidationErrors($validator, $user);
             return new JsonResponse($errorMessages, Response::HTTP_NOT_FOUND);
         }
+
+        $user->setRoles($user->getRoles());
+        $user->setPassword($passwordEncoder->encodePassword($user, $user->getPassword()));
 
         $client->addUser($user);
         $manager->flush();
