@@ -9,22 +9,22 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
 class ExceptionListener implements EventSubscriberInterface
 {
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $exceptionEvent)
     {
-        $e = $event->getThrowable();
-        $statusCode = $e->getStatusCode();
+        $event = $exceptionEvent->getThrowable();
+        $statusCode = $event->getStatusCode();
 
         $response = new JsonResponse(
             [
                 'status' => 'Exception',
                 'Code' => $statusCode,
-                'message' => $e->getMessage(),
+                'message' => $event->getMessage(),
             ],
             $statusCode
         );
 
         $response->headers->set('Content-Type', 'application/problem+json');
-        $event->setResponse($response);
+        $exceptionEvent->setResponse($response);
     }
 
     public static function getSubscribedEvents()
