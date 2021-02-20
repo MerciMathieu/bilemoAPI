@@ -6,13 +6,14 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity("email", message="This user already exists")
+ * @UniqueEntity("username", message="This user already exists")
  * @Hateoas\Relation(
  *     "self",
  *     href = @Hateoas\Route(
@@ -39,7 +40,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     exclusion = @Hateoas\Exclusion(groups={"add_user"}),
  * )
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id
@@ -52,17 +53,30 @@ class User
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank(message="You must enter 'email'")
-     * @Assert\Email(message="Email is not valid")
      * @Serializer\Groups({"users_list", "user_details", "add_user"})
      */
-    private $email;
+    private $username;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\Length(min="4")
+     * @Assert\NotBlank(message="Enter a 'password'")
+     * @Serializer\Groups({"add_user"})
+     */
+    private $password;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Type("\DateTimeInterface")
      * @Serializer\Groups({"user_details"})
+     * @Serializer\Groups({"add_user"})
      */
     private $createdAt;
+
+    /**
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
@@ -70,28 +84,14 @@ class User
      */
     private $client;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime('NOW');
+    }
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function setCreatedAt(): self
-    {
-        $this->createdAt = new \DateTime('NOW');
-
-        return $this;
     }
 
     public function getCreatedAt(): \DateTimeInterface
@@ -109,5 +109,61 @@ class User
         $this->client = $client;
 
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
+    {
+        return (string) $this->username;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getPassword()
+    {
+        return (string) $this->password;
+    }
+
+    public function getSalt()
+    {
+    }
+
+    public function eraseCredentials()
+    {
     }
 }

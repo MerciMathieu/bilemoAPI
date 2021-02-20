@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210115173700 extends AbstractMigration
+final class Version20210219155117 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -23,10 +23,10 @@ final class Version20210115173700 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE client_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE product_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE client (id INT NOT NULL, platform_name VARCHAR(255) NOT NULL, url VARCHAR(255) NOT NULL, username VARCHAR(180) NOT NULL, password VARCHAR(255) NOT NULL, roles JSON NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE client (id INT NOT NULL, client_name VARCHAR(255) NOT NULL, url VARCHAR(255) NOT NULL, username VARCHAR(180) NOT NULL, password VARCHAR(255) NOT NULL, roles JSON NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE product (id INT NOT NULL, model_name VARCHAR(255) NOT NULL, model_ref VARCHAR(255) NOT NULL, memory INT NOT NULL, color VARCHAR(255) NOT NULL, price DOUBLE PRECISION NOT NULL, description TEXT NOT NULL, url_image TEXT DEFAULT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE TABLE "user" (id INT NOT NULL, client_id INT NOT NULL, email VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON "user" (email)');
+        $this->addSql('CREATE TABLE "user" (id INT NOT NULL, client_id INT NOT NULL, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, roles JSON NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649F85E0677 ON "user" (username)');
         $this->addSql('CREATE INDEX IDX_8D93D64919EB6921 ON "user" (client_id)');
         $this->addSql('ALTER TABLE "user" ADD CONSTRAINT FK_8D93D64919EB6921 FOREIGN KEY (client_id) REFERENCES client (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }

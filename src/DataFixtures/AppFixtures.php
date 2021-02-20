@@ -34,7 +34,7 @@ class AppFixtures extends Fixture
             ->setClientName('admin')
             ->setUrl("admin@test.fr")
             ->setPassword(password_hash('nimda', 'argon2i'))
-            ->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
+            ->setRoles(['ROLE_ADMIN']);
 
         $manager->persist($client);
 
