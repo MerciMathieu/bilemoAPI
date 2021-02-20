@@ -26,7 +26,6 @@ class PaginationFactory
         $pagerfanta = new Pagerfanta($adapter);
         $pagerfanta->setMaxPerPage(5);
         $pagerfanta->setCurrentPage($page);
-//        dump($adapter); exit;
         $products = [];
         foreach ($pagerfanta->getCurrentPageResults() as $product) {
             $products[] = $product;
