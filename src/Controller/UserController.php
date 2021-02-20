@@ -114,7 +114,6 @@ class UserController extends ExtendedAbstractController
             'json',
             DeserializationContext::create()->setGroups(['add_user'])
         );
-        $user->setCreatedAt();
 
         if ($this->getValidationErrors($validator, $user)) {
             $errorMessages = $this->getValidationErrors($validator, $user);

@@ -33,3 +33,6 @@ services:
     App\EventListener\ExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+    jms_serializer.object_constructor:
+        class: App\Serializer\ObjectConstructor
