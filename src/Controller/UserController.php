@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\User;
+use App\Pagination\PaginationFactory;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\DeserializationContext;
@@ -32,17 +34,23 @@ class UserController extends ExtendedAbstractController
      *   @Model(type=User::class, groups={"users_list"})
      * )
      */
-    public function getUsers(UserRepository $userRepository, SerializerInterface $serializer): Response
+    public function getUsers(
+        UserRepository $userRepository,
+        SerializerInterface $serializer,
+        PaginationFactory $paginationFactory,
+        Request $request
+    ): Response
     {
+        /** @var Client $client */
         $client = $this->getUser();
+        $query = $userRepository->findByClientQueryBuilder($client);
 
-        $users = $userRepository->findBy(['client' => $client]);
+        $paginatedCollection = $paginationFactory->createCollection($query, $request, 'users', [], 5);
+
         $usersJson = $serializer->serialize(
-            $users,
+            $paginatedCollection,
             'json',
-            SerializationContext::create()->setGroups(
-                ['users_list']
-            )
+            SerializationContext::create()->setGroups(['users_list'])
         );
 
         return new Response($usersJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);
@@ -100,7 +108,12 @@ class UserController extends ExtendedAbstractController
         $client = $this->getUser();
 
         /** @var User $user */
-        $user = $serializer->deserialize($request->getContent(), User::class, 'json', DeserializationContext::create()->setGroups(['add_user']));
+        $user = $serializer->deserialize(
+            $request->getContent(),
+            User::class,
+            'json',
+            DeserializationContext::create()->setGroups(['add_user'])
+        );
 
         if ($this->getValidationErrors($validator, $user)) {
             $errorMessages = $this->getValidationErrors($validator, $user);
@@ -113,9 +126,11 @@ class UserController extends ExtendedAbstractController
         $client->addUser($user);
         $manager->flush();
 
-        $userJson = $serializer->serialize($user, 'json', SerializationContext::create()->setGroups(
-            ['user_details']
-        ));
+        $userJson = $serializer->serialize(
+            $user,
+            'json',
+            SerializationContext::create()->setGroups(['user_details'])
+        );
 
         return new Response($userJson, Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
     }

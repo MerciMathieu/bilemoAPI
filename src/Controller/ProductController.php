@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Pagination\PaginationFactory;
 use App\Repository\ProductRepository;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
@@ -28,16 +30,20 @@ class ProductController extends ExtendedAbstractController
      * )
      * @Cache(maxage="1 hour", public=true)
      */
-    public function getProducts(ProductRepository $productRepository, SerializerInterface $serializer): Response
+    public function getProducts(
+        ProductRepository $productRepository,
+        SerializerInterface $serializer,
+        Request $request,
+        PaginationFactory $paginationFactory
+    ): Response
     {
-        $products = $productRepository->findAll();
+        $query = $productRepository->findAllQueryBuilder();
 
+        $paginatedCollection = $paginationFactory->createCollection($query, $request, 'products', [], 5);
         $productsJson = $serializer->serialize(
-            $products,
+            $paginatedCollection,
             'json',
-            SerializationContext::create()->setGroups(
-                ['products_list']
-            )
+            SerializationContext::create()->setGroups(['products_list'])
         );
 
         $response = new Response($productsJson, Response::HTTP_OK, ['Content-Type' => 'application/json']);
