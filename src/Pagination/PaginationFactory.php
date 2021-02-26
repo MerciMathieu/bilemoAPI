@@ -18,25 +18,41 @@ class PaginationFactory
         $this->router = $router;
     }
 
-    public function createCollection(QueryBuilder $query, Request $request, $route, array $routeParams = [])
+    public function createCollection(QueryBuilder $query, Request $request, $route, array $routeParams = [], int $maxPerPage = 10): PaginatedCollection
     {
         $page = (int) $request->query->get('page', 1);
 
         $adapter = new QueryAdapter($query, false);
         $pagerfanta = new Pagerfanta($adapter);
-        $pagerfanta->setMaxPerPage(5);
-        $pagerfanta->setCurrentPage($page);
-        $products = [];
-        foreach ($pagerfanta->getCurrentPageResults() as $product) {
-            $products[] = $product;
+
+        $this->setPagerParameters($pagerfanta, $page, $maxPerPage);
+
+        $results = [];
+        foreach ($pagerfanta->getCurrentPageResults() as $result) {
+            $results[] = $result;
         }
 
         $paginatedCollection = new PaginatedCollection(
-            $products,
+            $results,
             $pagerfanta->getNbResults(),
             $page
         );
 
+        if (!empty($paginatedCollection)) {
+            $this->addLink($paginatedCollection, $route, $routeParams, $pagerfanta, $page);
+        }
+
+        return $paginatedCollection;
+    }
+
+    private function setPagerParameters($pagerfanta, $page, $maxPerPage): void
+    {
+        $pagerfanta->setMaxPerPage($maxPerPage);
+        $pagerfanta->setCurrentPage($page);
+    }
+
+    private function addLink($paginatedCollection, $route, $routeParams, $pagerfanta, $page)
+    {
         $createLinkUrl = function ($targetPage) use ($route, $routeParams) {
             return $this->router->generate($route, array_merge(
                 $routeParams,
@@ -54,7 +70,5 @@ class PaginationFactory
         if ($pagerfanta->hasPreviousPage()) {
             $paginatedCollection->addLink('prev', $createLinkUrl($pagerfanta->getPreviousPage()));
         }
-
-        return $paginatedCollection;
     }
 }

@@ -39,7 +39,7 @@ class ProductController extends ExtendedAbstractController
     {
         $query = $productRepository->findAllQueryBuilder();
 
-        $paginatedCollection = $paginationFactory->createCollection($query, $request, 'products');
+        $paginatedCollection = $paginationFactory->createCollection($query, $request, 'products', [], 5);
         $productsJson = $serializer->serialize(
             $paginatedCollection,
             'json',

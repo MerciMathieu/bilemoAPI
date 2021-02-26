@@ -45,7 +45,7 @@ class UserController extends ExtendedAbstractController
         $client = $this->getUser();
         $query = $userRepository->findByClientQueryBuilder($client);
 
-        $paginatedCollection = $paginationFactory->createCollection($query, $request, 'users');
+        $paginatedCollection = $paginationFactory->createCollection($query, $request, 'users', [], 5);
 
         $usersJson = $serializer->serialize(
             $paginatedCollection,
