@@ -51,7 +51,7 @@ class PaginationFactory
         $pagerfanta->setCurrentPage($page);
     }
 
-    private function addLink($paginatedCollection, $route, $routeParams, $pagerfanta, $page)
+    private function addLink($paginatedCollection, $route, $routeParams, $pagerfanta, $page): void
     {
         $createLinkUrl = function ($targetPage) use ($route, $routeParams) {
             return $this->router->generate($route, array_merge(
