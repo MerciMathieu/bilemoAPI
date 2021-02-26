@@ -35,8 +35,7 @@ class ProductController extends ExtendedAbstractController
         SerializerInterface $serializer,
         Request $request,
         PaginationFactory $paginationFactory
-    ): Response
-    {
+    ): Response {
         $query = $productRepository->findAllQueryBuilder();
 
         $paginatedCollection = $paginationFactory->createCollection($query, $request, 'products', [], 5);

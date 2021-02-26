@@ -39,8 +39,7 @@ class UserController extends ExtendedAbstractController
         SerializerInterface $serializer,
         PaginationFactory $paginationFactory,
         Request $request
-    ): Response
-    {
+    ): Response {
         /** @var Client $client */
         $client = $this->getUser();
         $query = $userRepository->findByClientQueryBuilder($client);
