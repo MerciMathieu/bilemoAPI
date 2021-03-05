@@ -22,11 +22,10 @@ class CacheKernel extends HttpCache
         }
 
         $response = new Response();
-        if ($this->getStore()->purge($request->getUri())) {
-            $response->setStatusCode(Response::HTTP_OK, 'Purged');
-        } else {
+        if (!$this->getStore()->purge($request->getUri())) {
             $response->setStatusCode(Response::HTTP_NOT_FOUND, 'Not found');
         }
+        $response->setStatusCode(Response::HTTP_OK, 'Purged');
 
         return $response;
     }
