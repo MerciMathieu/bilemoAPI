@@ -1,5 +1,7 @@
 {
     "type": "project",
+    "name": "Bilemo API",
+    "description": "API developed by Mathieu DELCLOS",
     "license": "proprietary",
     "require": {
         "php": ">=7.2.5",
@@ -50,11 +52,6 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "App\\Tests\\": "tests/"
         }
     },
     "replace": {
