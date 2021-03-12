@@ -11,7 +11,6 @@ use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -117,9 +116,8 @@ class UserController extends ExtendedAbstractController
             DeserializationContext::create()->setGroups(['add_user'])
         );
 
-        if ($this->getValidationErrors($validator, $user)) {
-            $errorMessages = $this->getValidationErrors($validator, $user);
-            return new JsonResponse($errorMessages, Response::HTTP_NOT_FOUND);
+        if ($errorMessages = $this->getValidationErrors($validator, $user)) {
+            return $this->throwValidationErrors($validator, $user);
         }
 
         $user->setRoles($user->getRoles());

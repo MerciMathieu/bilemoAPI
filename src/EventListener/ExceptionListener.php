@@ -11,8 +11,12 @@ class ExceptionListener implements EventSubscriberInterface
 {
     public function onKernelException(ExceptionEvent $exceptionEvent)
     {
+        $statusCode = '500';
+
         $event = $exceptionEvent->getThrowable();
-        $statusCode = $event->getStatusCode();
+        if (is_subclass_of($event, 'Symfony\Component\HttpKernel\Event\ExceptionEvent')) {
+            $statusCode = $event->getStatusCode();
+        }
 
         $response = new JsonResponse(
             [

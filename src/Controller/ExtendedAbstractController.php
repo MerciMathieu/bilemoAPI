@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class ExtendedAbstractController extends AbstractController
@@ -19,5 +21,17 @@ abstract class ExtendedAbstractController extends AbstractController
         }
 
         return $errorMessages;
+    }
+
+    protected function throwValidationErrors(ValidatorInterface $validator, $entity): JsonResponse
+    {
+        $errorMessages = $this->getValidationErrors($validator, $entity);
+        $response = [
+            'status' => 'Exception',
+            'code' => Response::HTTP_NOT_FOUND,
+            'message' => $errorMessages
+        ];
+
+        return new JsonResponse($response, Response::HTTP_NOT_FOUND);
     }
 }

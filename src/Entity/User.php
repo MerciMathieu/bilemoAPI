@@ -52,7 +52,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="You must enter 'email'")
+     * @Assert\NotBlank(message="You must enter 'username'")
      * @Serializer\Groups({"users_list", "user_details", "add_user"})
      */
     private $username;
@@ -60,7 +60,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string")
      * @Assert\Length(min="4")
-     * @Assert\NotBlank(message="Enter a 'password'")
+     * @Assert\NotBlank(message="You must enter a 'password'")
      * @Serializer\Groups({"add_user"})
      */
     private $password;
