@@ -9,11 +9,18 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class ExtendedAbstractController extends AbstractController
 {
-    protected function getValidationErrors(ValidatorInterface $validator, $entity): array
+    private $validator;
+
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
+    protected function getValidationErrors($entity): array
     {
         $errorMessages = [];
 
-        $violations = $validator->validate($entity);
+        $violations = $this->validator->validate($entity);
         if ($violations->count()) {
             foreach ($violations as $error) {
                 $errorMessages[] = $error->getMessage();
@@ -23,15 +30,15 @@ abstract class ExtendedAbstractController extends AbstractController
         return $errorMessages;
     }
 
-    protected function throwValidationErrors(ValidatorInterface $validator, $entity): JsonResponse
+    protected function throwValidationErrors($entity, $code = Response::HTTP_NOT_FOUND): JsonResponse
     {
-        $errorMessages = $this->getValidationErrors($validator, $entity);
+        $errorMessages = $this->getValidationErrors($entity);
         $response = [
             'status' => 'Exception',
-            'code' => Response::HTTP_NOT_FOUND,
+            'code' => $code,
             'message' => $errorMessages
         ];
 
-        return new JsonResponse($response, Response::HTTP_NOT_FOUND);
+        return new JsonResponse($response, $code);
     }
 }

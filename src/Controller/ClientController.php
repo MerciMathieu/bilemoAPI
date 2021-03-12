@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use JMS\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class ClientController extends ExtendedAbstractController
@@ -22,7 +21,6 @@ class ClientController extends ExtendedAbstractController
         Request $request,
         UserPasswordEncoderInterface $passwordEncoder,
         EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
         SerializerInterface $serializer
     ): Response {
         /** @var Client $client */
@@ -32,8 +30,8 @@ class ClientController extends ExtendedAbstractController
             'json'
         );
 
-        if ($this->getValidationErrors($validator, $client)) {
-            return $this->throwValidationErrors($validator, $client);
+        if ($this->getValidationErrors($client)) {
+            return $this->throwValidationErrors($client);
         }
 
         $client->setRoles($client->getRoles());

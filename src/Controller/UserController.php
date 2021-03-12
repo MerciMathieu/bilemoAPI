@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
@@ -103,7 +102,6 @@ class UserController extends ExtendedAbstractController
         SerializerInterface $serializer,
         Request $request,
         EntityManagerInterface $manager,
-        ValidatorInterface $validator,
         UserPasswordEncoderInterface $passwordEncoder
     ): Response {
         $client = $this->getUser();
@@ -116,8 +114,8 @@ class UserController extends ExtendedAbstractController
             DeserializationContext::create()->setGroups(['add_user'])
         );
 
-        if ($errorMessages = $this->getValidationErrors($validator, $user)) {
-            return $this->throwValidationErrors($validator, $user);
+        if ($errorMessages = $this->getValidationErrors($user)) {
+            return $this->throwValidationErrors($user);
         }
 
         $user->setRoles($user->getRoles());
