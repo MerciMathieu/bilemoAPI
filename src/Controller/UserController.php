@@ -9,6 +9,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\SerializationContext;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +34,7 @@ class UserController extends ExtendedAbstractController
      *   description="Returns the users' list, corresponding to a Client.",
      *   @Model(type=User::class, groups={"users_list"})
      * )
+     * @Cache(maxage="1 hour", public=true)
      */
     public function getUsers(
         UserRepository $userRepository,
@@ -63,6 +65,7 @@ class UserController extends ExtendedAbstractController
      *   description="Returns the user's details.",
      *   @Model(type=User::class, groups={"user_details"})
      * )
+     * @Cache(maxage="1 hour", public=true)
      */
     public function getUserDetails(User $user, SerializerInterface $serializer): Response
     {
