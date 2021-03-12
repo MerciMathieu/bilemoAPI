@@ -69,12 +69,13 @@ class User implements UserInterface
      * @ORM\Column(type="datetime")
      * @Assert\Type("\DateTimeInterface")
      * @Serializer\Groups({"user_details"})
-     * @Serializer\Groups({"add_user"})
+     * @Serializer\Groups({"add_user", "user_details"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="json")
+     * @Serializer\Groups({"user_details"})
      */
     private $roles = [];
 

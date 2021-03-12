@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Client;
@@ -35,6 +36,16 @@ class AppFixtures extends Fixture
             ->setUrl("admin@test.fr")
             ->setPassword(password_hash('nimda', 'argon2i'))
             ->setRoles(['ROLE_ADMIN']);
+
+        for ($i=0;$i<10;$i++) {
+            $user = new User();
+            $user->setUsername("user$i")
+                ->setPassword("user$i")
+                ->setRoles($user->getRoles())
+                ->setClient($client);
+
+            $manager->persist($user);
+        }
 
         $manager->persist($client);
 
