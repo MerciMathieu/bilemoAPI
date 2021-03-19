@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
@@ -11,10 +12,10 @@ class ExceptionListener implements EventSubscriberInterface
 {
     public function onKernelException(ExceptionEvent $exceptionEvent)
     {
-        $statusCode = '500';
-
+        $statusCode = Response::HTTP_NOT_FOUND;
         $event = $exceptionEvent->getThrowable();
-        if (is_subclass_of($event, 'Symfony\Component\HttpKernel\Event\ExceptionEvent')) {
+
+        if ($event instanceof $exceptionEvent) {
             $statusCode = $event->getStatusCode();
         }
 
@@ -22,7 +23,7 @@ class ExceptionListener implements EventSubscriberInterface
             [
                 'status' => 'Exception',
                 'Code' => $statusCode,
-                'message' => $event->getMessage(),
+                'message' => $event->getMessage()
             ],
             $statusCode
         );
