@@ -15,7 +15,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
  * @ORM\Table(name="`user`")
  * @UniqueEntity("username", message="This user already exists")
  * @Hateoas\Relation(
- *     "self",
+ *     "user_details",
  *     href = @Hateoas\Route(
  *          "user_details",
  *          parameters = { "id" = "expr(object.getId())" },
@@ -29,15 +29,24 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *          "users",
  *          absolute = true
  *     ),
- *     exclusion = @Hateoas\Exclusion(groups={"user_details"}),
+ *     exclusion = @Hateoas\Exclusion(groups={"user_details", "add_user"}),
  * )
  * @Hateoas\Relation(
- *     "Create user",
+ *     "delete_user",
+ *     href = @Hateoas\Route(
+ *          "delete_user",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *          absolute = true
+ *     ),
+ *     exclusion = @Hateoas\Exclusion(groups={"user_details", "users_list", "add_user"}),
+ * )
+ * @Hateoas\Relation(
+ *     "add_user",
  *     href = @Hateoas\Route(
  *          "add_user",
  *          absolute = true
  *     ),
- *     exclusion = @Hateoas\Exclusion(groups={"add_user"}),
+ *     exclusion = @Hateoas\Exclusion(groups={"users_list", "add_user", "user_details"}),
  * )
  */
 class User implements UserInterface

@@ -58,7 +58,6 @@ class Client implements UserInterface
     private $roles = [];
 
     /**
-     * @Groups("client_users")
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="client", orphanRemoval=true, cascade={"persist"})
      */
     private $users;
